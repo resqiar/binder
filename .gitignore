@@ -19,3 +19,9 @@
 
 # Go workspace file
 go.work
+
+# Node garbage
+node_modules
+
+# Temporary files
+tmp

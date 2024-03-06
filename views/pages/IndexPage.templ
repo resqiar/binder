@@ -1,0 +1,22 @@
+package pages
+
+import "binder/views/components/navbar"
+
+templ IndexHead() {
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<link href="/static/global.css" rel="stylesheet"/>
+		<title>Binder</title>
+	</head>
+}
+
+templ IndexPage() {
+	<!DOCTYPE html>
+	<html lang="en">
+		@IndexHead()
+		<body class="p-2 font-bold">
+			@navbar.Navbar()
+		</body>
+	</html>
+}
