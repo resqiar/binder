@@ -3,21 +3,21 @@ package pages
 import "binder/views/components/navbar"
 import "binder/views/components/card"
 
-templ IndexHead() {
+templ IndexHead(title string) {
 	<head>
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<link href="/static/global.css" rel="stylesheet"/>
 		<!-- HTMX BRUH -->
 		<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
-		<title>Binder</title>
+		<title>{ title }</title>
 	</head>
 }
 
 templ IndexPage() {
 	<!DOCTYPE html>
 	<html lang="en">
-		@IndexHead()
+		@IndexHead("Binder")
 		<body class="p-2 font-bold">
 			<header>
 				@navbar.Navbar()

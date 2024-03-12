@@ -16,5 +16,9 @@ func main() {
 		return utils.Render(c, http.StatusOK, pages.IndexPage())
 	})
 
+	e.GET("/login", func(c echo.Context) error {
+		return utils.Render(c, http.StatusOK, pages.LoginPage())
+	})
+
 	e.Logger.Fatal(e.Start(":8888"))
 }
