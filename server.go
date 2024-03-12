@@ -1,9 +1,7 @@
 package main
 
 import (
-	"binder/utils"
-	"binder/views/pages"
-	"net/http"
+	"binder/routes"
 
 	"github.com/labstack/echo/v4"
 )
@@ -12,13 +10,8 @@ func main() {
 	e := echo.New()
 	e.Static("/static", "views/public")
 
-	e.GET("/", func(c echo.Context) error {
-		return utils.Render(c, http.StatusOK, pages.IndexPage())
-	})
-
-	e.GET("/login", func(c echo.Context) error {
-		return utils.Render(c, http.StatusOK, pages.LoginPage())
-	})
+	// initiate routes
+	routes.InitWebRoutes(e)
 
 	e.Logger.Fatal(e.Start(":8888"))
 }
