@@ -1,0 +1,36 @@
+package card
+
+import "fmt"
+
+type MainCardProps struct {
+	Id    string
+	Title string
+	Desc  string
+	Image string
+}
+
+templ MainCard(data MainCardProps) {
+	<div>
+		<a
+			href={ templ.URL(fmt.Sprintf("/ext/%s", data.Id)) }
+			class="image-full card w-full cursor-pointer shadow-md transition-all hover:-translate-y-1 hover:shadow-2xl lg:w-96"
+		>
+			if data.Image != "" {
+				<figure>
+					<img
+						src={ data.Image }
+						alt={ data.Title }
+						class="max-h-[200px] w-full object-cover"
+						width="300"
+						height="200"
+					/>
+				</figure>
+			}
+			<div class="card-body">
+				<span class="badge font-bold">{ data.Id }</span>
+				<h2 class="card-title">{ data.Title }</h2>
+				<p class="line-clamp-3">{ data.Desc }</p>
+			</div>
+		</a>
+	</div>
+}

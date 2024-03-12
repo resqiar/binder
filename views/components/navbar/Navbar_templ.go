@@ -25,7 +25,7 @@ func Navbar() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 1)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav><div class=\"navbar bg-base-100 md:px-8\"><!-- LEFT --><div class=\"flex-none\"></div><!-- MIDDLE --><div class=\"flex-1 px-4 md:px-8\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -33,7 +33,7 @@ func Navbar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 2)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><!-- RIGHT --><div class=\"flex-none\"><div class=\"dropdown-end dropdown\"><label tabindex=\"-1\" for=\"dropdown-menu\" class=\"btn-ghost btn-circle btn\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" class=\"inline-block h-5 w-5 stroke-current\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z\"></path></svg></label><ul id=\"dropdown-menu\" tabindex=\"-1\" class=\"dropdown-content menu rounded-box w-52 bg-base-100 shadow-2xl\"><!-- LOGIN / REGISTER --><li><a href=\"/auth\">Login</a></li><!-- GITHUB LINK --><li><a href=\"https://github.com/resqiar/binder\" target=\"_blank\" rel=\"noreferrer\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -41,7 +41,7 @@ func Navbar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.WriteWatchModeString(templ_7745c5c3_Buffer, 3)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("GitHub</a></li></ul></div></div></div></nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
