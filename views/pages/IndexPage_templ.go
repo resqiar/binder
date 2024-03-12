@@ -105,7 +105,7 @@ func IndexBody() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><section class=\"flex flex-col items-center justify-evenly gap-8 px-2 md:flex-row\"><div class=\"flex-cols mb-12 flex w-full flex-wrap gap-2 px-2 pb-20 md:flex-row lg:mt-4\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><section class=\"flex w-full justify-center py-8 lg:px-12\"><!-- Search Box --><div class=\"form-control w-full px-8 md:px-2 lg:w-6/12\"><div class=\"input-group flex\"><input type=\"text\" id=\"search-input\" placeholder=\"Search…\" class=\"input input-bordered w-full rounded-e-none\"> <button class=\"btn btn-square rounded-s-none\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></button></div><label class=\"label px-2\" for=\"search-input\"><span class=\"label-text-alt\">Search ID, Title, Description, etc</span></label></div></section><section class=\"flex flex-col items-center justify-evenly gap-8 px-2 md:flex-row\"><div class=\"flex-cols mb-12 flex justify-center w-full flex-wrap gap-2 px-2 pb-20 md:flex-row lg:mt-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
