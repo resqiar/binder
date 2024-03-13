@@ -16,4 +16,8 @@ func InitWebRoutes(e *echo.Echo) {
 	e.GET("/login", func(c echo.Context) error {
 		return utils.Render(c, http.StatusOK, pages.LoginPage())
 	})
+
+	e.GET("/create", func(c echo.Context) error {
+		return utils.Render(c, http.StatusOK, pages.CreateExtPage())
+	})
 }
