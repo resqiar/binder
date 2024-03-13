@@ -1,4 +1,5 @@
 // @ts-check
+
 /**
 * @type {HTMLInputElement | null}
 */
@@ -32,6 +33,7 @@ function dzPreviews() {
         const file = dzFiles[i];
         if (!file) continue;
 
+        // remove all children before appending new child
         dzPreview?.replaceChildren();
 
         const reader = new FileReader();
@@ -88,6 +90,10 @@ function dzRestore() {
     dzShowReset(false);
 }
 
+/**
+* @param show {Boolean}
+* @returns void
+*/
 function dzShowReset(show = true) {
     if (!dzRestoreElem) return;
     if (show) {
@@ -95,4 +101,51 @@ function dzShowReset(show = true) {
     } else {
         dzRestoreElem.style.display = "none";
     }
+}
+
+const dzArea = document.getElementById("droppable-area");
+
+;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dzArea?.addEventListener(eventName, function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    })
+});
+
+;['dragenter', 'dragover'].forEach(eventName => {
+    dzArea?.addEventListener(eventName, () => dzHighlight(true))
+});
+
+;['dragleave', 'drop'].forEach(eventName => {
+    dzArea?.addEventListener(eventName, () => dzHighlight(false))
+});
+
+/**
+* @param h {Boolean}
+* @returns void
+*/
+function dzHighlight(h = true) {
+    if (!dzArea) return;
+    h ? dzArea.style.border = "2px dashed yellow" :
+        dzArea.style.border = "none";
+}
+
+dzArea?.addEventListener("drop", dzDrop);
+
+/**
+* @param e {DragEvent}
+* @returns void
+*/
+function dzDrop(e) {
+    let dataTransfer = e.dataTransfer;
+    let files = dataTransfer?.files;
+
+    if (!dzInput || !files) return;
+    if (!dzValidate(files)) return dzInput.value = "";
+
+    dzFiles = files;
+    dzPreviews();
+
+    // inject dragged files into HTML input
+    dzInput.files = files;
 }
