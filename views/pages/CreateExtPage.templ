@@ -29,7 +29,7 @@ templ CreateExtPage() {
 }
 
 templ CreateExtBody() {
-	<div class="my-12 flex w-full flex-col items-center py-4 px-4 lg:px-12">
+	<form hx-post="/api/ext/create" class="my-12 flex w-full flex-col items-center py-4 px-4 lg:px-12">
 		<h1 class="text-2xl font-bold">Create a New Extension</h1>
 		<div class="flex w-full flex-col gap-4 py-8 pb-20 lg:w-6/12">
 			<!-- Title -->
@@ -48,7 +48,7 @@ templ CreateExtBody() {
 					>
 						<path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h8m-8 6h16"></path>
 					</svg>
-					<input type="text" class="grow" placeholder="Title"/>
+					<input type="text" class="grow" placeholder="Title" required/>
 				</label>
 				<label class="label px-2" for="title-input">
 					<span class="label-text-alt">Title must be at least 3 characters</span>
@@ -68,14 +68,14 @@ templ CreateExtBody() {
 			</div>
 			<!-- Drag Drop Image -->
 			<div class="form-control">
-				<label class="label" for="title-input">
+				<label class="label" for="dropzone">
 					<span class="label-text">Upload Image</span>
 				</label>
 				@input.ImageDropzone()
 			</div>
 			<!-- Youtube URL -->
 			<div class="form-control">
-				<label class="label" for="title-input">
+				<label class="label" for="yt-input">
 					<span class="label-text">Youtube Video</span>
 				</label>
 				<label class="input input-bordered flex items-center gap-2">
@@ -95,7 +95,7 @@ templ CreateExtBody() {
 					</svg>
 					<input
 						type="text"
-						id="title-input"
+						id="yt-input"
 						placeholder="Youtube video URL"
 						class="grow"
 					/>
@@ -110,6 +110,9 @@ templ CreateExtBody() {
 					console.log(hello from the editor i guess)
 				</div>
 			</section>
+			<div class="my-12 w-full flex justify-end">
+				<button class="w-full btn btn-primary">Create</button>
+			</div>
 		</div>
-	</div>
+	</form>
 }
