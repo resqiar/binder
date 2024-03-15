@@ -7,6 +7,9 @@ templ CreateExtPage() {
 	<!DOCTYPE html>
 	<html lang="en">
 		@IndexHead("Create new Extension | Binder")
+		<head>
+			<link href="/static/ace/theme/terminal.min.css" rel="stylesheet"/>
+		</head>
 		<body class="p-2 font-bold">
 			<header>
 				@navbar.Navbar()
@@ -15,6 +18,12 @@ templ CreateExtPage() {
 				@CreateExtBody()
 			</main>
 			<script src="/static/dropzone.min.js"></script>
+			<script src="/static/ace/ace.js"></script>
+			<script>
+				let editor = ace.edit("editor");
+				editor.setTheme("ace/theme/terminal");
+				editor.session.setMode("ace/mode/typescript");
+			</script>
 		</body>
 	</html>
 }
@@ -93,6 +102,14 @@ templ CreateExtBody() {
 				</label>
 			</div>
 			<!-- CODE INPUT SECTION -->
+			<section>
+				<label class="label" for="editor">
+					<span class="label-text">Code</span>
+				</label>
+				<div id="editor" class="min-h-[500px] !text-lg">
+					console.log(hello from the editor i guess)
+				</div>
+			</section>
 		</div>
 	</div>
 }

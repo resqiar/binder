@@ -34,7 +34,7 @@ func CreateExtPage() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<body class=\"p-2 font-bold\"><header>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<head><link href=\"/static/ace/theme/terminal.min.css\" rel=\"stylesheet\"></head><body class=\"p-2 font-bold\"><header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -50,7 +50,7 @@ func CreateExtPage() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main><script src=\"/static/dropzone.min.js\"></script></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main><script src=\"/static/dropzone.min.js\"></script><script src=\"/static/ace/ace.js\"></script><script>\n\t\t\t\tlet editor = ace.edit(\"editor\");\n\t\t\t\teditor.setTheme(\"ace/theme/terminal\");\n\t\t\t\teditor.session.setMode(\"ace/mode/typescript\");\n\t\t\t</script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -82,7 +82,7 @@ func CreateExtBody() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><!-- Youtube URL --><div class=\"form-control\"><label class=\"label\" for=\"title-input\"><span class=\"label-text\">Youtube Video</span></label> <label class=\"input input-bordered flex items-center gap-2\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"h-5 w-5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244\"></path></svg> <input type=\"text\" id=\"title-input\" placeholder=\"Youtube video URL\" class=\"grow\"></label></div><!-- CODE INPUT SECTION --></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><!-- Youtube URL --><div class=\"form-control\"><label class=\"label\" for=\"title-input\"><span class=\"label-text\">Youtube Video</span></label> <label class=\"input input-bordered flex items-center gap-2\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" class=\"h-5 w-5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244\"></path></svg> <input type=\"text\" id=\"title-input\" placeholder=\"Youtube video URL\" class=\"grow\"></label></div><!-- CODE INPUT SECTION --><section><label class=\"label\" for=\"editor\"><span class=\"label-text\">Code</span></label><div id=\"editor\" class=\"min-h-[500px] !text-lg\">console.log(hello from the editor i guess)</div></section></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
