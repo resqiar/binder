@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"binder/middlewares"
 	"binder/utils"
 	"binder/views/pages"
 	"net/http"
@@ -19,5 +20,5 @@ func InitWebRoutes(e *echo.Echo) {
 
 	e.GET("/create", func(c echo.Context) error {
 		return utils.Render(c, http.StatusOK, pages.CreateExtPage())
-	})
+	}, middlewares.ProtectedMiddleware)
 }
