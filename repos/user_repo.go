@@ -26,12 +26,11 @@ func CreateUser(input *dtos.CreateUserInput) (*entities.User, error) {
 func FindUserByEmail(email string) (*entities.User, error) {
 	var user entities.User
 
-	SQL := "SELECT id, username, fullname, email, bio, picture_url FROM users WHERE email = $1"
+	SQL := "SELECT id, username, email, bio, picture_url FROM users WHERE email = $1"
 	row := configs.DB_POOL.QueryRow(context.Background(), SQL, email)
 	if err := row.Scan(
 		&user.ID,
 		&user.Username,
-		&user.Fullname,
 		&user.Email,
 		&user.Bio,
 		&user.PictureURL,

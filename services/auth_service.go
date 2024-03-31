@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/sessions"
+	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
 
@@ -23,6 +25,18 @@ func GoogleLoginCallbackService(c echo.Context) error {
 		return c.NoContent(http.StatusUnauthorized)
 	}
 
+	sess, err := session.Get("session", c)
+	if err != nil {
+		log.Printf("Failed to initiate session: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to initiate session")
+	}
+
+	sess.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   86400 * 7,
+		HttpOnly: true,
+	}
+
 	// exchange token retrieved from google with valid token
 	token, err := configs.GoogleConfig.Exchange(c.Request().Context(), code)
 	if err != nil {
@@ -36,18 +50,29 @@ func GoogleLoginCallbackService(c echo.Context) error {
 	}
 
 	// check if there is a user recorded with the same creds
-	exist, err := repos.FindUserByEmail(payload.Email)
-	if err != nil {
+	exist, _ := repos.FindUserByEmail(payload.Email)
+	if exist == nil {
 		newUser, err := CreateUser(payload)
 		if err != nil {
 			log.Printf("Failed to register user: %v", err)
 			return c.String(http.StatusInternalServerError, "Failed to register user")
 		}
 
-		log.Println(newUser)
+		sess.Values["ID"] = newUser.ID
+
+		if err := sess.Save(c.Request(), c.Response()); err != nil {
+			log.Printf("Failed to initiate session: %v", err)
+			return c.String(http.StatusInternalServerError, "Failed to initiate session")
+		}
+
+		return c.Redirect(http.StatusTemporaryRedirect, "/")
 	}
 
-	log.Println(exist)
+	sess.Values["ID"] = exist.ID
+	if err := sess.Save(c.Request(), c.Response()); err != nil {
+		log.Printf("Failed to initiate session: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to initiate session")
+	}
 
-	return c.JSON(http.StatusOK, payload)
+	return c.Redirect(http.StatusTemporaryRedirect, "/")
 }

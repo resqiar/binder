@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/joho/godotenv"
+	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
 
@@ -18,6 +19,9 @@ func main() {
 	}
 
 	e := echo.New()
+
+	store := configs.InitiateSession()
+	e.Use(session.Middleware(*store))
 	e.Static("/static", "views/public")
 
 	// initiate configs

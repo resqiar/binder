@@ -1,15 +1,17 @@
 package entities
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type User struct {
 	ID         string
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 	Provider   string
-	Fullname   string
 	Username   string
 	Email      string
-	Bio        string
+	Bio        sql.NullString
 	PictureURL string
 }
