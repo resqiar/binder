@@ -2,23 +2,26 @@ package configs
 
 import (
 	"context"
-	"log"
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func InitDBCon() *pgxpool.Pool {
+var DB_POOL *pgxpool.Pool
+
+func InitDBCon() error {
 	DSN := os.Getenv("DSN")
 
 	db, err := pgxpool.New(context.Background(), DSN)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	if err := db.Ping(context.Background()); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	return db
+	DB_POOL = db
+
+	return nil
 }

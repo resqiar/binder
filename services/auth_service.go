@@ -2,7 +2,9 @@ package services
 
 import (
 	"binder/configs"
+	"binder/repos"
 	"binder/utils"
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -32,6 +34,20 @@ func GoogleLoginCallbackService(c echo.Context) error {
 	if err != nil {
 		return c.NoContent(http.StatusUnauthorized)
 	}
+
+	// check if there is a user recorded with the same creds
+	exist, err := repos.FindUserByEmail(payload.Email)
+	if err != nil {
+		newUser, err := CreateUser(payload)
+		if err != nil {
+			log.Printf("Failed to register user: %v", err)
+			return c.String(http.StatusInternalServerError, "Failed to register user")
+		}
+
+		log.Println(newUser)
+	}
+
+	log.Println(exist)
 
 	return c.JSON(http.StatusOK, payload)
 }

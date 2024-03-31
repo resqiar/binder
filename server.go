@@ -3,6 +3,7 @@ package main
 import (
 	"binder/configs"
 	"binder/routes"
+	"log"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -11,7 +12,10 @@ import (
 func main() {
 	godotenv.Load()
 
-	_ = configs.InitDBCon()
+	// database connection
+	if err := configs.InitDBCon(); err != nil {
+		log.Fatal(err)
+	}
 
 	e := echo.New()
 	e.Static("/static", "views/public")
