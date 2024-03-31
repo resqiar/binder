@@ -11,6 +11,8 @@ import (
 func main() {
 	godotenv.Load()
 
+	_ = configs.InitDBCon()
+
 	e := echo.New()
 	e.Static("/static", "views/public")
 
