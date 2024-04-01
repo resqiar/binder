@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-
-	"github.com/jaevor/go-nanoid"
 )
 
 var (
@@ -35,9 +33,9 @@ func FormatUsername(name string) string {
 	formatted = strings.ReplaceAll(formatted, " ", "_")
 
 	// generate random string id using nanoid package
-	id, _ := nanoid.Standard(7)
+	id := GenerateRandomString(7)
 
-	formatted = fmt.Sprintf("%s_%s", formatted, id())
+	formatted = fmt.Sprintf("%s_%s", formatted, id)
 
 	return formatted
 }

@@ -14,24 +14,54 @@ import (
 
 func GoogleLoginService(c echo.Context) error {
 	var conf = configs.GoogleConfig
-	URL := conf.AuthCodeURL("not-implemented-yet")
 
-	return c.Redirect(http.StatusTemporaryRedirect, URL)
-}
+	// generate random id for state identification
+	generated := utils.GenerateRandomString(32)
 
-func GoogleLoginCallbackService(c echo.Context) error {
-	code := c.QueryParam("code")
-	if code == "" {
-		return c.NoContent(http.StatusUnauthorized)
-	}
-
-	sess, err := session.Get("session", c)
+	sess, err := session.Get("session_state", c)
 	if err != nil {
 		log.Printf("Failed to initiate session: %v", err)
 		return c.String(http.StatusInternalServerError, "Failed to initiate session")
 	}
 
 	sess.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   60 * 10, // 10 minutes
+		HttpOnly: true,
+	}
+
+	// set state value for verification in callback service
+	sess.Values["state"] = generated
+	if err := sess.Save(c.Request(), c.Response()); err != nil {
+		log.Printf("Failed to initiate session: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to initiate session")
+	}
+
+	URL := conf.AuthCodeURL(generated)
+
+	return c.Redirect(http.StatusTemporaryRedirect, URL)
+}
+
+func GoogleLoginCallbackService(c echo.Context) error {
+	code := c.QueryParam("code")
+	state := c.QueryParam("state")
+
+	if code == "" || state == "" {
+		return c.String(http.StatusUnauthorized, "Unauthorized")
+	}
+
+	stateSession, err := session.Get("session_state", c)
+	if state != stateSession.Values["state"] {
+		return c.String(http.StatusUnauthorized, "Session expired or invalid")
+	}
+
+	userSession, err := session.Get("session", c)
+	if err != nil {
+		log.Printf("Failed to initiate session: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to initiate session")
+	}
+
+	userSession.Options = &sessions.Options{
 		Path:     "/",
 		MaxAge:   86400 * 7,
 		HttpOnly: true,
@@ -50,17 +80,16 @@ func GoogleLoginCallbackService(c echo.Context) error {
 	}
 
 	// check if there is a user recorded with the same creds
-	exist, _ := repos.FindUserByEmail(payload.Email)
-	if exist == nil {
+	existingUser, _ := repos.FindUserByEmail(payload.Email)
+	if existingUser == nil {
 		newUser, err := CreateUser(payload)
 		if err != nil {
 			log.Printf("Failed to register user: %v", err)
 			return c.String(http.StatusInternalServerError, "Failed to register user")
 		}
 
-		sess.Values["ID"] = newUser.ID
-
-		if err := sess.Save(c.Request(), c.Response()); err != nil {
+		userSession.Values["ID"] = newUser.ID
+		if err := userSession.Save(c.Request(), c.Response()); err != nil {
 			log.Printf("Failed to initiate session: %v", err)
 			return c.String(http.StatusInternalServerError, "Failed to initiate session")
 		}
@@ -68,10 +97,19 @@ func GoogleLoginCallbackService(c echo.Context) error {
 		return c.Redirect(http.StatusTemporaryRedirect, "/")
 	}
 
-	sess.Values["ID"] = exist.ID
-	if err := sess.Save(c.Request(), c.Response()); err != nil {
+	userSession.Values["ID"] = existingUser.ID
+	if err := userSession.Save(c.Request(), c.Response()); err != nil {
 		log.Printf("Failed to initiate session: %v", err)
 		return c.String(http.StatusInternalServerError, "Failed to initiate session")
+	}
+
+	// Clean up state session as it's no longer needed.
+	// Even though the lifetime of the stateSession is only 10 minutes,
+	// cleaning up manually like this ensures there is no leak of state session, making it more secure.
+	stateSession.Options.MaxAge = -1
+	if err := stateSession.Save(c.Request(), c.Response()); err != nil {
+		log.Printf("Failed to delete state session: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to clean up session")
 	}
 
 	return c.Redirect(http.StatusTemporaryRedirect, "/")
