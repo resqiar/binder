@@ -14,12 +14,12 @@ func ProtectedMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		sess, err := session.Get("session", c)
 		if err != nil {
 			log.Println(err)
-			return c.String(http.StatusUnauthorized, "Unauthorized")
+			return c.Redirect(http.StatusTemporaryRedirect, "/login")
 		}
 
 		userID := sess.Values["ID"]
 		if userID == nil {
-			return c.String(http.StatusUnauthorized, "Unauthorized")
+			return c.Redirect(http.StatusTemporaryRedirect, "/login")
 		}
 
 		// save user id from session into context key value
