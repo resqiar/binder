@@ -1,6 +1,7 @@
 package navbar
 
 import "binder/views/components/brand"
+import "binder/utils"
 
 templ Navbar() {
 	<nav>
@@ -12,7 +13,17 @@ templ Navbar() {
 				@brand.Logo()
 			</div>
 			<!-- RIGHT -->
-			<div class="flex-none">
+			<div class="flex-none gap-4">
+				if utils.GetUserIDFromContext(ctx) != "" {
+					<div>
+						<button class="btn btn-sm btn-primary">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+							</svg>
+							Create Extension
+						</button>
+					</div>
+				}
 				<div class="dropdown-end dropdown">
 					<label tabindex="-1" for="dropdown-menu" class="btn-ghost btn-circle btn">
 						<svg

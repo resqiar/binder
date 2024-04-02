@@ -12,7 +12,7 @@ import (
 func InitWebRoutes(e *echo.Echo) {
 	e.GET("/", func(c echo.Context) error {
 		return utils.Render(c, http.StatusOK, pages.IndexPage())
-	})
+	}, middlewares.UnprotectedMiddleware)
 
 	e.GET("/login", func(c echo.Context) error {
 		return utils.Render(c, http.StatusOK, pages.LoginPage())
