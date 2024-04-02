@@ -14,4 +14,5 @@ type User struct {
 	Email      string
 	Bio        sql.NullString
 	PictureURL string
+	extensions []Extension
 }
