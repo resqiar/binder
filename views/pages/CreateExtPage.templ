@@ -30,7 +30,12 @@ templ CreateExtPage() {
 }
 
 templ CreateExtBody() {
-	<form hx-post="/api/ext/create" class="my-12 flex w-full flex-col items-center py-4 px-4 lg:px-12">
+	<form
+		hx-post="/api/ext/create"
+		hx-target="#error-wrapper"
+		enctype="multipart/form-data"
+		class="my-12 flex w-full flex-col items-center py-4 px-4 lg:px-12"
+	>
 		<h1 class="text-2xl font-bold">Create a New Extension</h1>
 		<div class="flex w-full flex-col gap-4 py-8 pb-20 lg:w-8/12">
 			<!-- Title -->
@@ -49,7 +54,7 @@ templ CreateExtBody() {
 					>
 						<path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h8m-8 6h16"></path>
 					</svg>
-					<input type="text" class="grow" placeholder="Title" required/>
+					<input type="text" name="ext-title" class="grow" placeholder="Title" required/>
 				</label>
 				<label class="label px-2" for="title-input">
 					<span class="label-text-alt">Title must be at least 3 characters</span>
@@ -62,6 +67,7 @@ templ CreateExtBody() {
 				</label>
 				<textarea
 					id="desc-input"
+					name="ext-desc"
 					class="textarea textarea-bordered w-full"
 					rows="10"
 					placeholder="Description"
@@ -97,6 +103,7 @@ templ CreateExtBody() {
 					<input
 						type="text"
 						id="yt-input"
+						name="ext-yt"
 						placeholder="Youtube video URL"
 						class="grow"
 					/>
@@ -111,6 +118,7 @@ templ CreateExtBody() {
 					console.log(hello from the editor i guess)
 				</div>
 			</section>
+			<div id="error-wrapper"></div>
 			<div class="my-12 w-full flex justify-end">
 				<button class="w-full btn btn-primary">Create</button>
 			</div>

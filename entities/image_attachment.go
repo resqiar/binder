@@ -1,7 +1,7 @@
 package entities
 
 type ImageAttachment struct {
-	ID          int
+	ID          string
 	URL         string
 	ExtensionID string
 }
