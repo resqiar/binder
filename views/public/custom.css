@@ -1,0 +1,11 @@
+.loading-indicator {
+  display:none;
+}
+
+.htmx-request .loading-indicator {
+  display: inline !important;
+}
+
+.htmx-request.loading-indicator {
+  display: inline !important;
+}

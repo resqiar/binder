@@ -17,7 +17,6 @@ templ CreateExtPage() {
 			<main>
 				@CreateExtBody()
 			</main>
-			<script src="/static/create-ext.min.js"></script>
 			<script src="/static/dropzone.min.js"></script>
 			<script src="/static/ace/ace.js"></script>
 			<script>
@@ -32,7 +31,9 @@ templ CreateExtPage() {
 templ CreateExtBody() {
 	<form
 		hx-post="/api/ext/create"
-		hx-target="#error-wrapper"
+		hx-target="#info-wrapper"
+		hx-indicator="#loading"
+		hx-disabled-elt="button[type='submit']"
 		enctype="multipart/form-data"
 		class="my-12 flex w-full flex-col items-center py-4 px-4 lg:px-12"
 	>
@@ -118,9 +119,12 @@ templ CreateExtBody() {
 					console.log(hello from the editor i guess)
 				</div>
 			</section>
-			<div id="error-wrapper"></div>
+			<div id="info-wrapper"></div>
 			<div class="my-12 w-full flex justify-end">
-				<button class="w-full btn btn-primary">Create</button>
+				<button type="submit" class="w-full btn btn-primary">
+					Create
+					<span id="loading" class="loading loading-dots loading-md loading-indicator"></span>
+				</button>
 			</div>
 		</div>
 	</form>

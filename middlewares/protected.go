@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"binder/repos"
 	"context"
 	"log"
 	"net/http"
@@ -22,8 +23,15 @@ func ProtectedMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.Redirect(http.StatusTemporaryRedirect, "/login")
 		}
 
+		valid, err := repos.FindUserByID(userID.(string))
+		if err != nil {
+			return c.Redirect(http.StatusTemporaryRedirect, "/login")
+		}
+
+		c.Set("userID", valid.ID)
+
 		// save user id from session into context key value
-		ctx := context.WithValue(c.Request().Context(), "userID", userID)
+		ctx := context.WithValue(c.Request().Context(), "userID", valid.ID)
 		c.SetRequest(c.Request().WithContext(ctx))
 
 		return next(c)

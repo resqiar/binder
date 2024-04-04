@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"binder/middlewares"
 	"binder/services"
 
 	"github.com/labstack/echo/v4"
@@ -13,6 +14,6 @@ func InitAPIRoutes(e *echo.Echo) {
 	auth.GET("/google", services.GoogleLoginService)
 	auth.GET("/google/callback", services.GoogleLoginCallbackService)
 
-	ext := e.Group("api/ext")
+	ext := e.Group("api/ext", middlewares.ProtectedMiddleware)
 	ext.POST("/create", services.CreateExtensionService, middleware.BodyLimit("6M"))
 }
