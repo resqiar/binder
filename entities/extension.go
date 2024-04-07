@@ -12,6 +12,7 @@ type Extension struct {
 	UpdatedAt   time.Time
 	Title       string
 	Description sql.NullString
+	Code        sql.NullString
 	YoutubeURL  sql.NullString
 	AuthorID    string
 	images      []ImageAttachment

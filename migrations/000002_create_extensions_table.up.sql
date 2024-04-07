@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS extensions (
     title   TEXT NOT NULL,
     description   TEXT,
     youtube_url TEXT,
+    code   TEXT,
     author_id UUID,
 
     FOREIGN KEY(author_id) REFERENCES users(id)

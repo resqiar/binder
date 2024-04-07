@@ -19,11 +19,7 @@ templ CreateExtPage() {
 			</main>
 			<script src="/static/dropzone.min.js"></script>
 			<script src="/static/ace/ace.js"></script>
-			<script>
-				let editor = ace.edit("editor");
-				editor.setTheme("ace/theme/terminal");
-				editor.session.setMode("ace/mode/typescript");
-			</script>
+			<script src="/static/editor.min.js"></script>
 		</body>
 	</html>
 }
@@ -115,9 +111,11 @@ templ CreateExtBody() {
 				<label class="label" for="editor">
 					<span class="label-text">Code</span>
 				</label>
-				<div id="editor" class="min-h-[500px] !text-lg">
-					console.log(hello from the editor i guess)
-				</div>
+				<input aria-hidden="true" type="hidden" name="ext-code" id="hidden-editor"/>
+				<div id="editor" class="min-h-[500px] !text-lg"></div>
+				<label class="label" for="editor">
+					<span class="label-text-alt"><span id="editor-len">0</span>/10000</span>
+				</label>
 			</section>
 			<div id="info-wrapper"></div>
 			<div class="my-12 w-full flex justify-end">

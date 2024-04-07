@@ -13,7 +13,7 @@ func CreateExt(extInput *dtos.CreateExtInput, imgInput []dtos.CreateImagesInput)
 	var extID string
 	var slug string
 
-	SQL := "INSERT INTO extensions(slug, title, description, youtube_url, author_id) VALUES ($1, $2, $3, $4, $5) RETURNING id, slug"
+	SQL := "INSERT INTO extensions(slug, title, description, code, youtube_url, author_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, slug"
 
 	tx, err := configs.DB_POOL.Begin(context.Background())
 	if err != nil {
@@ -28,6 +28,7 @@ func CreateExt(extInput *dtos.CreateExtInput, imgInput []dtos.CreateImagesInput)
 		extInput.Slug,
 		extInput.Title,
 		extInput.Description,
+		extInput.Code,
 		extInput.Youtube_url,
 		extInput.Author_id,
 	).Scan(&extID, &slug)

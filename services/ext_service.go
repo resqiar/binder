@@ -17,6 +17,7 @@ func CreateExtensionService(c echo.Context) error {
 	images := multipart.File["ext-images"]
 	title := c.FormValue("ext-title")
 	desc := c.FormValue("ext-desc")
+	code := c.FormValue("ext-code")
 	yt := c.FormValue("ext-yt")
 
 	if title == "" {
@@ -25,6 +26,10 @@ func CreateExtensionService(c echo.Context) error {
 
 	if len(images) > 5 {
 		return c.String(http.StatusOK, views.SendErrorAlert("Max images are only 5"))
+	}
+
+	if len(code) > 10000 {
+		return c.String(http.StatusOK, views.SendErrorAlert("The length of code is exceeding 10K characters"))
 	}
 
 	// Upload images to ImageKit
@@ -37,6 +42,7 @@ func CreateExtensionService(c echo.Context) error {
 		Slug:        utils.GenerateRandomString(8),
 		Title:       title,
 		Description: desc,
+		Code:        code,
 		Youtube_url: yt,
 		Author_id:   userID,
 	}
