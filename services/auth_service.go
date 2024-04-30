@@ -114,3 +114,19 @@ func GoogleLoginCallbackService(c echo.Context) error {
 
 	return c.Redirect(http.StatusTemporaryRedirect, "/")
 }
+
+func LogoutService(c echo.Context) error {
+	userSession, err := session.Get("session", c)
+	if err != nil {
+		log.Printf("Failed to initiate session: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to initiate session")
+	}
+
+	userSession.Options.MaxAge = -1
+	if err := userSession.Save(c.Request(), c.Response()); err != nil {
+		log.Printf("Failed to delete state session: %v", err)
+		return c.String(http.StatusInternalServerError, "Failed to clean up session")
+	}
+
+	return c.Redirect(http.StatusTemporaryRedirect, "/login")
+}

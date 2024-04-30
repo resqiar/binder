@@ -47,9 +47,15 @@ templ Navbar() {
 					>
 						<!-- LOGIN / REGISTER -->
 						<li>
-							<a href="/login">
-								Login
-							</a>
+							if utils.GetUserIDFromContext(ctx) != "" {
+								<a href="/auth/logout">
+									Logout
+								</a>
+							} else {
+								<a href="/login">
+									Login
+								</a>
+							}
 						</li>
 						<!-- GITHUB LINK -->
 						<li>
