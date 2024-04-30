@@ -3,6 +3,7 @@ package repos
 import (
 	"binder/configs"
 	"binder/dtos"
+	"binder/entities"
 	"context"
 	"log"
 
@@ -74,4 +75,66 @@ func createAttachments(tx pgx.Tx, extID string, urls []dtos.CreateImagesInput) e
 	}
 
 	return nil
+}
+
+func GetAllExts(userID string) ([]entities.Extension, error) {
+	var exts []entities.Extension
+
+	SQL := "SELECT id, slug, title, description, created_at, updated_at FROM extensions WHERE author_id = $1"
+
+	rows, err := configs.DB_POOL.Query(context.Background(), SQL, userID)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var ext entities.Extension
+
+		if err = rows.Scan(
+			&ext.ID,
+			&ext.Slug,
+			&ext.Title,
+			&ext.Description,
+			&ext.CreatedAt,
+			&ext.UpdatedAt,
+		); err != nil {
+			log.Println(err)
+			return nil, err
+		}
+
+		exts = append(exts, ext)
+	}
+
+	return exts, nil
+}
+
+func GetExt(userID string, slug string) (*entities.Extension, error) {
+	var ext entities.Extension
+
+	SQL := `
+		SELECT e.id, e.slug, e.title, e.description, e.code, e.youtube_url, e.created_at, e.updated_at 
+		FROM extensions e
+		LEFT JOIN image_attachments a
+		ON a.extension_id = e.id
+		WHERE e.author_id = $1 AND e.slug = $2
+	`
+
+	row := configs.DB_POOL.QueryRow(context.Background(), SQL, userID, slug)
+	if err := row.Scan(
+		&ext.ID,
+		&ext.Slug,
+		&ext.Title,
+		&ext.Description,
+		&ext.Code,
+		&ext.YoutubeURL,
+		&ext.CreatedAt,
+		&ext.UpdatedAt,
+	); err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return &ext, nil
 }

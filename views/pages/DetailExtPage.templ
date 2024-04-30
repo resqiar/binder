@@ -1,0 +1,18 @@
+package pages
+
+import "binder/entities"
+import "fmt"
+import "binder/views/components/navbar"
+
+templ DetailExtPage(ext *entities.Extension) {
+	<!DOCTYPE html>
+	<html lang="en">
+		@IndexHead(fmt.Sprintf("%s | Binder", ext.Title))
+		<body class="p-2 font-bold">
+			<header>
+				@navbar.Navbar()
+			</header>
+			<main></main>
+		</body>
+	</html>
+}

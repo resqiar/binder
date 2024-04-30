@@ -12,6 +12,8 @@ import "bytes"
 
 import "binder/views/components/navbar"
 import "binder/views/components/card"
+import "binder/entities"
+import "binder/utils"
 
 func IndexHead(title string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -33,7 +35,7 @@ func IndexHead(title string) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/pages/IndexPage.templ`, Line: 14, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/pages/IndexPage.templ`, Line: 16, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -58,7 +60,7 @@ func IndexHead(title string) templ.Component {
 	})
 }
 
-func IndexPage() templ.Component {
+func IndexPage(exts []entities.Extension) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -91,7 +93,7 @@ func IndexPage() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IndexBody().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IndexBody(exts).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -106,14 +108,7 @@ func IndexPage() templ.Component {
 	})
 }
 
-var cardData = card.MainCardProps{
-	Id:    "1",
-	Title: "Something is teribly wrong",
-	Desc:  "I believe so, but what can you do",
-	Image: "https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg",
-}
-
-func IndexBody() templ.Component {
+func IndexBody(exts []entities.Extension) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -126,17 +121,47 @@ func IndexBody() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><section class=\"flex w-full justify-center py-8 lg:px-12\"><!-- Search Box --><div class=\"form-control w-full px-8 md:px-2 lg:w-6/12\"><div class=\"input-group flex\"><input type=\"text\" id=\"search-input\" placeholder=\"Search…\" class=\"input input-bordered w-full rounded-e-none\"> <button class=\"btn btn-square rounded-s-none\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></button></div><label class=\"label px-2\" for=\"search-input\"><span class=\"label-text-alt\">Search ID, Title, Description, etc</span></label></div></section><section><div class=\"flex-cols mb-12 flex justify-center w-full flex-wrap gap-2 px-4 pb-20 md:flex-row lg:mt-4\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><section class=\"flex w-full justify-center py-8 lg:px-12\"><!-- Search Box --><div class=\"form-control w-full px-8 md:px-2 lg:w-6/12\"><div class=\"input-group flex\"><input type=\"text\" id=\"search-input\" placeholder=\"Search…\" class=\"input input-bordered w-full rounded-e-none\"> <button class=\"btn btn-square rounded-s-none\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z\"></path></svg></button></div><label class=\"label px-2\" for=\"search-input\"><span class=\"label-text-alt\">Search ID, Title, Description, etc</span></label></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for i := 1; i < 10; i++ {
-			templ_7745c5c3_Err = card.MainCard(cardData).Render(ctx, templ_7745c5c3_Buffer)
+		if utils.GetUserIDFromContext(ctx) != "" {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if len(exts) != 0 {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex-cols mb-12 flex justify-center w-full flex-wrap gap-2 px-4 pb-20 md:flex-row lg:mt-4\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, ext := range exts {
+					templ_7745c5c3_Err = card.MainCard(ext).Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex-cols mb-12 flex justify-center w-full flex-wrap gap-2 px-4 pb-20 md:flex-row lg:mt-4\"><div class=\"flex gap-2\"><h1>No extensions found,</h1><a href=\"/create\" class=\"underline\">create a new one</a></div></div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</section>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<section><div class=\"flex-cols mb-12 flex justify-center w-full flex-wrap gap-2 px-4 pb-20 md:flex-row lg:mt-4\"><div class=\"flex gap-2\"><h1>You need to log in first before your extensions appear.</h1><a href=\"/login\" class=\"underline\">Login here.</a></div></div></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></section></main>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

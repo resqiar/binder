@@ -55,3 +55,26 @@ func CreateExtensionService(c echo.Context) error {
 
 	return c.String(http.StatusOK, views.SendCreateExtSuccessAlert(fmt.Sprintf("/ext/%s", *extSlug)))
 }
+
+func GetAllExtensionService(c echo.Context) error {
+	userID := c.Get("userID").(string)
+
+	exts, err := repos.GetAllExts(userID)
+	if err != nil {
+		return c.String(http.StatusOK, views.SendErrorAlert("Failed to get your extensions, please try again later"))
+	}
+
+	return c.JSON(http.StatusOK, exts)
+}
+
+func GetExtensionService(c echo.Context) error {
+	userID := c.Get("userID").(string)
+	slug := c.Param("slug")
+
+	exts, err := repos.GetExt(userID, slug)
+	if err != nil {
+		return c.String(http.StatusOK, views.SendErrorAlert("Failed to get your extension, please try again later"))
+	}
+
+	return c.JSON(http.StatusOK, exts)
+}

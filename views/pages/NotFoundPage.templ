@@ -1,0 +1,27 @@
+package pages
+
+import "binder/views/components/navbar"
+
+templ NotFoundPage() {
+	<!DOCTYPE html>
+	<html lang="en">
+		@IndexHead("404 Not Found | Binder")
+		<body class="p-2 font-bold">
+			<header>
+				@navbar.Navbar()
+			</header>
+			<main>
+				@NotFoundBody()
+			</main>
+		</body>
+	</html>
+}
+
+templ NotFoundBody() {
+	<main class="mt-16 flex min-h-screen w-full items-start justify-center lg:mt-0 lg:items-center">
+		<div class="flex flex-col justify-center items-center">
+			<h1 class="font-bold text-[48px]">404 Not Found</h1>
+			<a href="/" class="underline">back to dashboard</a>
+		</div>
+	</main>
+}

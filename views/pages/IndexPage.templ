@@ -2,6 +2,8 @@ package pages
 
 import "binder/views/components/navbar"
 import "binder/views/components/card"
+import "binder/entities"
+import "binder/utils"
 
 templ IndexHead(title string) {
 	<head>
@@ -16,7 +18,7 @@ templ IndexHead(title string) {
 	</head>
 }
 
-templ IndexPage() {
+templ IndexPage(exts []entities.Extension) {
 	<!DOCTYPE html>
 	<html lang="en">
 		@IndexHead("Binder")
@@ -25,20 +27,13 @@ templ IndexPage() {
 				@navbar.Navbar()
 			</header>
 			<main>
-				@IndexBody()
+				@IndexBody(exts)
 			</main>
 		</body>
 	</html>
 }
 
-var cardData = card.MainCardProps{
-	Id:    "1",
-	Title: "Something is teribly wrong",
-	Desc:  "I believe so, but what can you do",
-	Image: "https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg",
-}
-
-templ IndexBody() {
+templ IndexBody(exts []entities.Extension) {
 	<main>
 		<section class="flex w-full justify-center py-8 lg:px-12">
 			<!-- Search Box -->
@@ -72,12 +67,32 @@ templ IndexBody() {
 				</label>
 			</div>
 		</section>
-		<section>
-			<div class="flex-cols mb-12 flex justify-center w-full flex-wrap gap-2 px-4 pb-20 md:flex-row lg:mt-4">
-				for i := 1; i < 10; i++ {
-					@card.MainCard(cardData)
+		if utils.GetUserIDFromContext(ctx) != "" {
+			<section>
+				if len(exts) != 0 {
+					<div class="flex-cols mb-12 flex justify-center w-full flex-wrap gap-2 px-4 pb-20 md:flex-row lg:mt-4">
+						for _, ext := range exts {
+							@card.MainCard(ext)
+						}
+					</div>
+				} else {
+					<div class="flex-cols mb-12 flex justify-center w-full flex-wrap gap-2 px-4 pb-20 md:flex-row lg:mt-4">
+						<div class="flex gap-2">
+							<h1>No extensions found,</h1>
+							<a href="/create" class="underline">create a new one</a>
+						</div>
+					</div>
 				}
-			</div>
-		</section>
+			</section>
+		} else {
+			<section>
+				<div class="flex-cols mb-12 flex justify-center w-full flex-wrap gap-2 px-4 pb-20 md:flex-row lg:mt-4">
+					<div class="flex gap-2">
+						<h1>You need to log in first before your extensions appear.</h1>
+						<a href="/login" class="underline">Login here.</a>
+					</div>
+				</div>
+			</section>
+		}
 	</main>
 }
