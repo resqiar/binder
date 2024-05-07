@@ -78,3 +78,26 @@ func GetExtensionService(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, exts)
 }
+
+func SearchExtensionService(c echo.Context) error {
+	userID := c.Get("userID").(string)
+	keyword := c.QueryParam("search-keyword")
+
+	// if the keyword is empty, the user assumed to clear
+	// the result. Hence, query all extensions.
+	if keyword == "" {
+		exts, err := repos.GetAllExts(userID)
+		if err != nil {
+			return c.String(http.StatusOK, views.SendErrorAlert("Failed to get your extensions, please try again later"))
+		}
+
+		return c.String(http.StatusOK, views.SendSearchCard(exts))
+	}
+
+	exts, err := repos.SearchExt(userID, keyword)
+	if err != nil || len(exts) == 0 {
+		return c.String(http.StatusOK, views.SendSearchNotFound(fmt.Sprintf("Keyword for \"%s\" not found, try another...", keyword)))
+	}
+
+	return c.String(http.StatusOK, views.SendSearchCard(exts))
+}

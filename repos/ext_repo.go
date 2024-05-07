@@ -4,6 +4,7 @@ import (
 	"binder/configs"
 	"binder/dtos"
 	"binder/entities"
+	"binder/utils"
 	"context"
 	"database/sql"
 	"log"
@@ -148,4 +149,44 @@ func GetExt(userID string, slug string) (*entities.Extension, error) {
 	}
 
 	return &ext, nil
+}
+
+func SearchExt(userID string, keyword string) ([]entities.Extension, error) {
+	var exts []entities.Extension
+
+	// format keyword from "search keyword" to "search & keyword"
+	formatted_keywords := utils.FormatSearch(keyword)
+
+	SQL := `
+		SELECT id, slug, title, description, created_at, updated_at 
+		FROM extensions
+		WHERE search_vector @@ to_tsquery('english', $2) AND author_id = $1
+	`
+
+	rows, err := configs.DB_POOL.Query(context.Background(), SQL, userID, formatted_keywords)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var ext entities.Extension
+
+		if err = rows.Scan(
+			&ext.ID,
+			&ext.Slug,
+			&ext.Title,
+			&ext.Description,
+			&ext.CreatedAt,
+			&ext.UpdatedAt,
+		); err != nil {
+			log.Println(err)
+			return nil, err
+		}
+
+		exts = append(exts, ext)
+	}
+
+	return exts, nil
 }
