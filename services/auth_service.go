@@ -94,7 +94,7 @@ func GoogleLoginCallbackService(c echo.Context) error {
 			return c.String(http.StatusInternalServerError, "Failed to initiate session")
 		}
 
-		return c.Redirect(http.StatusTemporaryRedirect, "/")
+		return c.Redirect(http.StatusTemporaryRedirect, "/dashboard")
 	}
 
 	userSession.Values["ID"] = existingUser.ID
@@ -112,7 +112,7 @@ func GoogleLoginCallbackService(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "Failed to clean up session")
 	}
 
-	return c.Redirect(http.StatusTemporaryRedirect, "/")
+	return c.Redirect(http.StatusTemporaryRedirect, "/dashboard")
 }
 
 func LogoutService(c echo.Context) error {

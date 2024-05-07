@@ -5,7 +5,9 @@ import (
 	"binder/dtos"
 	"binder/entities"
 	"context"
+	"database/sql"
 	"log"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -112,13 +114,15 @@ func GetAllExts(userID string) ([]entities.Extension, error) {
 
 func GetExt(userID string, slug string) (*entities.Extension, error) {
 	var ext entities.Extension
+	var images sql.NullString
 
 	SQL := `
-		SELECT e.id, e.slug, e.title, e.description, e.code, e.youtube_url, e.created_at, e.updated_at 
+		SELECT e.id, e.slug, e.title, e.description, e.code, e.youtube_url, e.created_at, e.updated_at, STRING_AGG(a.url, ',')
 		FROM extensions e
 		LEFT JOIN image_attachments a
 		ON a.extension_id = e.id
 		WHERE e.author_id = $1 AND e.slug = $2
+		GROUP BY e.id, e.slug, e.title, e.description, e.code, e.youtube_url, e.created_at, e.updated_at
 	`
 
 	row := configs.DB_POOL.QueryRow(context.Background(), SQL, userID, slug)
@@ -131,9 +135,16 @@ func GetExt(userID string, slug string) (*entities.Extension, error) {
 		&ext.YoutubeURL,
 		&ext.CreatedAt,
 		&ext.UpdatedAt,
+		&images,
 	); err != nil {
 		log.Println(err)
 		return nil, err
+	}
+
+	// update picture urls from aggregated string
+	if images.String != "" {
+		splitted_images := strings.Split(images.String, ",")
+		ext.ImageUrls = splitted_images
 	}
 
 	return &ext, nil

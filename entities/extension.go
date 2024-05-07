@@ -15,5 +15,5 @@ type Extension struct {
 	Code        sql.NullString
 	YoutubeURL  sql.NullString
 	AuthorID    string
-	images      []ImageAttachment
+	ImageUrls   []string
 }

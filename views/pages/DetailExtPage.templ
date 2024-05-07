@@ -7,12 +7,106 @@ import "binder/views/components/navbar"
 templ DetailExtPage(ext *entities.Extension) {
 	<!DOCTYPE html>
 	<html lang="en">
-		@IndexHead(fmt.Sprintf("%s | Binder", ext.Title))
-		<body class="p-2 font-bold">
+		@IndexHead(fmt.Sprintf("%s | Binder", ext.Title)) {
+			<link href="/static/ace/theme/terminal.min.css" rel="stylesheet"/>
+			<script src="/static/qrcode.min.js"></script>
+			<script src="/static/ace/ace.js"></script>
+		}
+		<body class="p-2 font-bold bg-base-300" onload={ injectScript(ext) }>
 			<header>
 				@navbar.Navbar()
 			</header>
-			<main></main>
+			<main class="min-h-[95vh] flex flex-col-reverse lg:flex-row-reverse lg:gap-12 pt-6">
+				<div class="flex flex-col items-center">
+					<div class="card mb-8 h-min w-full bg-base-100 shadow-2xl md:mr-8 lg:mt-10 lg:w-[200px]">
+						<div class="card-body flex items-center justify-center">
+							<div id="qrcode"></div>
+							<div class="mt-4 flex flex-col items-center justify-center">
+								<h2 class="card-title text-center">Scan me</h2>
+								<p class="text-center text-sm">Open Binder app and scan the QR code</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div
+					class="card mb-4 w-full rounded-t-none bg-base-100 pb-6 shadow-2xl md:my-4 md:rounded-xl lg:ml-8 lg:mt-10"
+				>
+					if len(ext.ImageUrls) > 0 {
+						<div class="relative carousel w-full">
+							for idx, url := range ext.ImageUrls {
+								<div id={ fmt.Sprintf("item-%d", idx+1) } class="carousel-item w-full">
+									<div class="relative w-full">
+										<img
+											src={ url }
+											alt={ ext.Title }
+											class="max-h-[300px] w-full object-cover md:rounded-t-xl"
+										/>
+										<label
+											for={ fmt.Sprintf("#modal-item-%d", idx+1) }
+											class="modal-button absolute top-0 left-0 right-0 bottom-0 z-10 cursor-pointer"
+										></label>
+									</div>
+								</div>
+							}
+						</div>
+						<div class="flex justify-center w-full py-2 gap-2">
+							for idx := range ext.ImageUrls {
+								<a href={ templ.SafeURL(fmt.Sprintf("#item-%d", idx+1)) } class="btn btn-xs">{ fmt.Sprint(idx+1) }</a>
+								<!-- ZOOM IMAGE MODAL -->
+								<input type="checkbox" id={ fmt.Sprintf("#modal-item-%d", idx+1) } class="modal-toggle"/>
+								<label
+									for={ fmt.Sprintf("#modal-item-%d", idx+1) }
+									class="modal h-full w-full backdrop-blur-md"
+								>
+									<div class="modal-box relative max-h-full max-w-full p-0 shadow-2xl lg:h-[90%] lg:w-[95%]">
+										<label
+											for={ fmt.Sprintf("#modal-item-%d", idx+1) }
+											class="btn-sm btn-circle btn absolute right-2 top-2 shadow-2xl"
+										>✕</label>
+										<div class="flex h-full w-full justify-center bg-black">
+											<img src={ ext.ImageUrls[idx] } class="object-cover" alt="fullscreen media"/>
+										</div>
+									</div>
+								</label>
+							}
+						</div>
+					}
+					if ext.YoutubeURL.String != "" {
+						<!-- YOUTUBE PLAYER -->
+						<!-- SHOW ONLY WHEN URL VALID -->
+						<div class="pb-2">
+							<div></div>
+						</div>
+					}
+					<div class="card-body">
+						<span class="badge badge-primary font-bold">{ ext.Slug }</span>
+						<h2 class="card-title">{ ext.Title }</h2>
+						<div class="whitespace-pre-wrap">{ ext.Description.String }</div>
+					</div>
+				</div>
+			</main>
+			<!-- CODE INPUT SECTION -->
+			<section class="px-8">
+				<label class="label" for="editor">
+					<span class="label-text">Code</span>
+				</label>
+				<div id="editor" class="min-h-[700px] !text-lg"></div>
+			</section>
 		</body>
 	</html>
+}
+
+script injectScript(ext *entities.Extension) {
+	const elem = document.getElementById("qrcode");
+	new QRCode(elem, {
+		text: `https://binder.resqiar.com/ext/${ext.Slug}`,
+		width: 150,
+		height: 150,
+	});
+
+	const editor = ace.edit("editor");
+	editor.setReadOnly(true);
+	editor.setTheme("ace/theme/terminal");
+	editor.session.setMode("ace/mode/typescript");
+	editor.session.setValue(ext.Code.String);
 }

@@ -11,7 +11,7 @@ import (
 )
 
 func InitWebRoutes(e *echo.Echo) {
-	e.GET("/", func(c echo.Context) error {
+	e.GET("/dashboard", func(c echo.Context) error {
 		userID := utils.GetUserIDFromContext(c.Request().Context())
 		exts, _ := repos.GetAllExts(userID)
 
