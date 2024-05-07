@@ -11,6 +11,10 @@ import (
 )
 
 func InitWebRoutes(e *echo.Echo) {
+	e.GET("/", func(c echo.Context) error {
+		return utils.Render(c, http.StatusOK, pages.HomePage())
+	})
+
 	e.GET("/dashboard", func(c echo.Context) error {
 		userID := utils.GetUserIDFromContext(c.Request().Context())
 		exts, _ := repos.GetAllExts(userID)

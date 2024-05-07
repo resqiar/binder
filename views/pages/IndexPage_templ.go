@@ -81,7 +81,7 @@ func IndexPage(exts []entities.Extension) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<body class=\"p-2 font-bold\"><header>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<body><header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
