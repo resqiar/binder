@@ -4,6 +4,7 @@ import (
 	"binder/configs"
 	"binder/routes"
 	"log"
+	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo-contrib/session"
@@ -31,5 +32,6 @@ func main() {
 	routes.InitWebRoutes(e)
 	routes.InitAPIRoutes(e)
 
-	e.Logger.Fatal(e.Start(":8888"))
+	PORT := os.Getenv("PORT")
+	e.Logger.Fatal(e.Start(":" + PORT))
 }
