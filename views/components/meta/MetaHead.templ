@@ -1,0 +1,43 @@
+package meta
+
+var DEFAULT_TITLE = "Binder"
+var DEFAULT_DESC = "With Binder, we let you to enrich your books with extensions, allowing you to save videos, extensive text excerpts, images, code, and link them directly within your books."
+var DEFAULT_LOGO = "/static/media/squarelogo.png"
+var OG_LOGO = "/static/media/squarelogo-fb.png"
+var TWT_LOGO = "/static/media/squarelogo-twitter.png"
+
+templ MetaHead() {
+	<meta name="description" content={ DEFAULT_DESC }/>
+	<meta name="image" content={ DEFAULT_LOGO }/>
+	<meta itemProp="name" content={ DEFAULT_TITLE }/>
+	<meta itemProp="description" content={ DEFAULT_DESC }/>
+	<meta itemProp="image" content={ DEFAULT_LOGO }/>
+	<!-- OG GENERAL -->
+	<meta name="og:title" property="og:title" content={ DEFAULT_TITLE }/>
+	<meta
+		name="og:description"
+		property="og:description"
+		content={ DEFAULT_DESC }
+	/>
+	<meta name="og:image" property="og:image" content={ OG_LOGO }/>
+	<meta name="og:url" property="og:url" content="binder.resqiar.com"/>
+	<meta name="og:site_name" property="og:site_name" content="Binder"/>
+	<meta name="og:type" property="og:type" content="website"/>
+	<!-- TWITTER -->
+	<meta name="twitter:card" content="summary"/>
+	<meta name="twitter:title" content={ DEFAULT_TITLE }/>
+	<meta name="twitter:description" content={ DEFAULT_DESC }/>
+	<meta name="twitter:image:src" content={ TWT_LOGO }/>
+	<!-- ICON & MANIFEST -->
+	<link rel="apple-touch-icon" sizes="180x180" href="/static/media/apple-touch-icon.png"/>
+	<link rel="icon" type="image/png" sizes="32x32" href="/static/media/favicon-32x32.png"/>
+	<link rel="icon" type="image/png" sizes="16x16" href="/static/media/favicon-16x16.png"/>
+	<link rel="manifest" href="/static/media/site.webmanifest"/>
+	<link rel="mask-icon" href="/static/media/safari-pinned-tab.svg" color="#5bbad5"/>
+	<!-- THEME -->
+	<meta name="msapplication-TileColor" content="#b91d47"/>
+	<meta name="theme-color" content="#ffffff"/>
+	<meta name="msapplication-TileColor" content="#ffffff"/>
+	<meta name="msapplication-TileImage" content="/static/media/ms-icon-144x144.png"/>
+	<meta name="theme-color" content="#ffffff"/>
+}

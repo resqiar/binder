@@ -4,11 +4,13 @@ import "binder/views/components/navbar"
 import "binder/views/components/card"
 import "binder/entities"
 import "binder/utils"
+import "binder/views/components/meta"
 
 templ IndexHead(title string) {
 	<head>
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		@meta.MetaHead()
 		<link href="/static/global.css" rel="stylesheet"/>
 		<link href="/static/custom.css" rel="stylesheet"/>
 		<!-- HTMX BRUH -->
