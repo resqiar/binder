@@ -6,7 +6,7 @@ require (
 	github.com/a-h/templ v0.2.663
 	github.com/gorilla/sessions v1.2.2
 	github.com/imagekit-developer/imagekit-go v0.0.0-20231221064253-557eb49f9c53
-	github.com/jackc/pgx/v5 v5.5.5
+	github.com/jackc/pgx/v5 v5.6.0
 	github.com/jaevor/go-nanoid v1.3.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo-contrib v0.16.0
