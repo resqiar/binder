@@ -130,22 +130,22 @@ func IndexBody(exts []entities.Extension) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><section class=\"flex w-full justify-center py-8 lg:px-12\"><!-- Search Box --><div class=\"form-control w-full px-8 md:px-2 lg:w-6/12\"><div class=\"input-group flex\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><section class=\"flex w-full justify-center py-8 lg:px-12\"><!-- Search Box --><div class=\"form-control w-full px-8 md:px-2 lg:w-6/12\"><div class=\"flex items-center gap-4 w-full\"><div class=\"input-group flex w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if utils.GetUserIDFromContext(ctx) != "" {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input type=\"text\" id=\"search-input\" placeholder=\"Search…\" class=\"input input-bordered w-full rounded-e-none\" name=\"search-keyword\" hx-get=\"/api/ext/search\" hx-trigger=\"keyup delay:500ms\" hx-target=\"#exts-list\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input type=\"text\" id=\"search-input\" placeholder=\"Search…\" class=\"input input-bordered w-full rounded\" name=\"search-keyword\" hx-get=\"/api/ext/search\" hx-trigger=\"keyup delay:500ms\" hx-target=\"#exts-list\" hx-indicator=\"#search-spinner\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input type=\"text\" id=\"search-input\" placeholder=\"Search…\" class=\"input input-bordered w-full rounded-e-none\" name=\"search-keyword\" disabled=\"true\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input type=\"text\" id=\"search-input\" placeholder=\"Search…\" class=\"input input-bordered w-full rounded\" name=\"search-keyword\" disabled=\"true\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><label class=\"label px-2\" for=\"search-input\"><span class=\"label-text-alt\">Search ID, Title, Description, etc</span></label></div></section>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><span class=\"loading loading-ring loading-xs search-indicator\" id=\"search-spinner\"></span></div><label class=\"label px-2\" for=\"search-input\"><span class=\"label-text-alt\">Search ID, Title, Description, etc</span></label></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

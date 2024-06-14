@@ -40,28 +40,32 @@ templ IndexBody(exts []entities.Extension) {
 		<section class="flex w-full justify-center py-8 lg:px-12">
 			<!-- Search Box -->
 			<div class="form-control w-full px-8 md:px-2 lg:w-6/12">
-				<div class="input-group flex">
-					if utils.GetUserIDFromContext(ctx) != "" {
-						<input
-							type="text"
-							id="search-input"
-							placeholder="Search…"
-							class="input input-bordered w-full rounded-e-none"
-							name="search-keyword"
-							hx-get="/api/ext/search"
-							hx-trigger="keyup delay:500ms"
-							hx-target="#exts-list"
-						/>
-					} else {
-						<input
-							type="text"
-							id="search-input"
-							placeholder="Search…"
-							class="input input-bordered w-full rounded-e-none"
-							name="search-keyword"
-							disabled="true"
-						/>
-					}
+				<div class="flex items-center gap-4 w-full">
+					<div class="input-group flex w-full">
+						if utils.GetUserIDFromContext(ctx) != "" {
+							<input
+								type="text"
+								id="search-input"
+								placeholder="Search…"
+								class="input input-bordered w-full rounded"
+								name="search-keyword"
+								hx-get="/api/ext/search"
+								hx-trigger="keyup delay:500ms"
+								hx-target="#exts-list"
+								hx-indicator="#search-spinner"
+							/>
+						} else {
+							<input
+								type="text"
+								id="search-input"
+								placeholder="Search…"
+								class="input input-bordered w-full rounded"
+								name="search-keyword"
+								disabled="true"
+							/>
+						}
+					</div>
+					<span class="loading loading-ring loading-xs search-indicator" id="search-spinner"></span>
 				</div>
 				<label class="label px-2" for="search-input">
 					<span class="label-text-alt">Search ID, Title, Description, etc</span>

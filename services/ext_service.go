@@ -101,3 +101,22 @@ func SearchExtensionService(c echo.Context) error {
 
 	return c.String(http.StatusOK, views.SendSearchCard(exts))
 }
+
+func DeleteExtensionService(c echo.Context) error {
+	userID := c.Get("userID").(string)
+	extSlug := c.Param("slug")
+
+	if extSlug == "" {
+		return c.String(http.StatusNotFound, views.SendErrorAlert("You are requesting to unrecognized URL"))
+	}
+
+	// Delete extension with its attachments
+	err := repos.DeleteExt(userID, extSlug)
+	if err != nil {
+		return c.String(http.StatusOK, views.SendErrorAlert("Failed to delete extension, please try again later"))
+	}
+
+	// Redirect back to dashboard while in success
+	c.Response().Header().Add("HX-Redirect", "/dashboard")
+	return c.String(http.StatusOK, "OK")
+}

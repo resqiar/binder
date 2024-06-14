@@ -190,3 +190,91 @@ func SearchExt(userID string, keyword string) ([]entities.Extension, error) {
 
 	return exts, nil
 }
+
+func DeleteExt(userID string, extSlug string) error {
+	GET_EXT_SQL := `
+		SELECT e.id, STRING_AGG(a.id, ',') AS ImageIds
+		FROM extensions e
+		LEFT JOIN image_attachments a
+		ON a.extension_id = e.id
+		WHERE e.author_id = $1 AND e.slug = $2
+		GROUP BY e.id
+	`
+	DELETE_ATTACHMENT_SQL := "DELETE FROM image_attachments WHERE id = $1 AND extension_id = $2"
+	DELETE_EXT_SQL := "DELETE FROM extensions WHERE slug = $1 AND author_id = $2"
+
+	tx, err := configs.DB_POOL.Begin(context.Background())
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(context.Background())
+
+	type TemporaryExt struct {
+		ID       string
+		ImageIds []string
+	}
+
+	var temp TemporaryExt
+	var imageIds sql.NullString
+
+	// Step 1: get extension detail
+	row := tx.QueryRow(
+		context.Background(),
+		GET_EXT_SQL,
+		userID,
+		extSlug,
+	)
+	if err := row.Scan(
+		&temp.ID,
+		&imageIds,
+	); err != nil {
+		log.Println("Failed to get extension detail:", err)
+		return err
+	}
+
+	// bind picture ids from aggregated string
+	if imageIds.String != "" {
+		splitted_images := strings.Split(imageIds.String, ",")
+		temp.ImageIds = splitted_images
+	}
+
+	for _, imageId := range temp.ImageIds {
+		// Step 2: delete image from imagekit
+		err = utils.DeleteImage(imageId)
+		if err != nil {
+			log.Println("[Skipping...] Failed deleting imagekit file:", err)
+		}
+
+		// Step 3: delete attachments using the ids
+		_, err = tx.Exec(
+			context.Background(),
+			DELETE_ATTACHMENT_SQL,
+			imageId,
+			temp.ID,
+		)
+		if err != nil {
+			log.Println("Failed deleting attachments:", err)
+			return err
+		}
+	}
+
+	// Step 4: delete extension
+	_, err = tx.Exec(
+		context.Background(),
+		DELETE_EXT_SQL,
+		extSlug,
+		userID,
+	)
+	if err != nil {
+		log.Println("Failed deleting extension:", err)
+		return err
+	}
+
+	// Step 5: commit tx
+	if err := tx.Commit(context.Background()); err != nil {
+		log.Println("Failed to commit delete ext transaction:", err)
+		return err
+	}
+
+	return nil
+}

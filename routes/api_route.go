@@ -16,5 +16,6 @@ func InitAPIRoutes(e *echo.Echo) {
 
 	ext := e.Group("api/ext", middlewares.ProtectedMiddleware)
 	ext.POST("/create", services.CreateExtensionService, middleware.BodyLimit("6M"))
+	ext.DELETE("/delete/:slug", services.DeleteExtensionService)
 	ext.GET("/search", services.SearchExtensionService)
 }
