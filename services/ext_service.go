@@ -120,3 +120,23 @@ func DeleteExtensionService(c echo.Context) error {
 	c.Response().Header().Add("HX-Redirect", "/dashboard")
 	return c.String(http.StatusOK, "OK")
 }
+
+func DeleteExtensionImageService(c echo.Context) error {
+	userID := c.Get("userID").(string)
+	extSlug := c.Param("slug")
+	imageId := c.Param("imageId")
+
+	if extSlug == "" || imageId == "" {
+		return c.String(http.StatusNotFound, views.SendErrorAlert("You are requesting to unrecognized URL"))
+	}
+
+	// Delete image from an extension
+	err := repos.DeleteExtImage(userID, extSlug, imageId)
+	if err != nil {
+		return c.String(http.StatusOK, views.SendErrorAlert("Failed to delete image, please try again later"))
+	}
+
+	// Redirect back (refresh) while in success attempt
+	c.Response().Header().Add("HX-Redirect", fmt.Sprintf("/edit/%s", extSlug))
+	return c.String(http.StatusOK, "OK")
+}

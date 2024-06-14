@@ -75,7 +75,7 @@ func DetailExtPage(ext *entities.Extension) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var4 templ.SafeURL = templ.SafeURL(fmt.Sprintf("/manage/%s", ext.Slug))
+		var templ_7745c5c3_Var4 templ.SafeURL = templ.SafeURL(fmt.Sprintf("/edit/%s", ext.Slug))
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var4)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -84,12 +84,12 @@ func DetailExtPage(ext *entities.Extension) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if len(ext.ImageUrls) > 0 {
+		if len(ext.ImageAttachments) > 0 {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative carousel w-full\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for idx, url := range ext.ImageUrls {
+			for idx, value := range ext.ImageAttachments {
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -108,9 +108,9 @@ func DetailExtPage(ext *entities.Extension) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(url)
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(value.URL.String)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/pages/DetailExtPage.templ`, Line: 61, Col: 20}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/pages/DetailExtPage.templ`, Line: 61, Col: 33}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -151,7 +151,7 @@ func DetailExtPage(ext *entities.Extension) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for idx := range ext.ImageUrls {
+			for idx := range ext.ImageAttachments {
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -218,9 +218,9 @@ func DetailExtPage(ext *entities.Extension) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var14 string
-				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(ext.ImageUrls[idx])
+				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(ext.ImageAttachments[idx].URL.String)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/pages/DetailExtPage.templ`, Line: 88, Col: 40}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/pages/DetailExtPage.templ`, Line: 88, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {

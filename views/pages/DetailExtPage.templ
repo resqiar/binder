@@ -32,7 +32,7 @@ templ DetailExtPage(ext *entities.Extension) {
 						<div class="card-body flex items-center">
 							<div class="flex w-full items-center justify-evenly">
 								<div class="tooltip" data-tip="Edit Extension">
-									<a href={ templ.SafeURL(fmt.Sprintf("/manage/%s", ext.Slug)) } class="btn btn-circle btn-outline btn-warning">
+									<a href={ templ.SafeURL(fmt.Sprintf("/edit/%s", ext.Slug)) } class="btn btn-circle btn-outline btn-warning">
 										<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
 											<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"></path>
 										</svg>
@@ -52,13 +52,13 @@ templ DetailExtPage(ext *entities.Extension) {
 				<div
 					class="card mb-4 w-full rounded-t-none bg-base-100 pb-6 shadow-2xl md:my-4 md:rounded-xl lg:ml-8 lg:mt-10"
 				>
-					if len(ext.ImageUrls) > 0 {
+					if len(ext.ImageAttachments) > 0 {
 						<div class="relative carousel w-full">
-							for idx, url := range ext.ImageUrls {
+							for idx, value := range ext.ImageAttachments {
 								<div id={ fmt.Sprintf("item-%d", idx+1) } class="carousel-item w-full">
 									<div class="relative w-full">
 										<img
-											src={ url }
+											src={ value.URL.String }
 											alt={ ext.Title }
 											class="h-[400px] w-full object-cover md:rounded-t-xl"
 										/>
@@ -71,7 +71,7 @@ templ DetailExtPage(ext *entities.Extension) {
 							}
 						</div>
 						<div class="flex justify-center w-full py-2 gap-2">
-							for idx := range ext.ImageUrls {
+							for idx := range ext.ImageAttachments {
 								<a href={ templ.SafeURL(fmt.Sprintf("#item-%d", idx+1)) } class="btn btn-xs">{ fmt.Sprint(idx+1) }</a>
 								<!-- ZOOM IMAGE MODAL -->
 								<input type="checkbox" id={ fmt.Sprintf("#modal-item-%d", idx+1) } class="modal-toggle"/>
@@ -85,7 +85,7 @@ templ DetailExtPage(ext *entities.Extension) {
 											class="btn-sm btn-circle btn absolute right-2 top-2 shadow-2xl"
 										>✕</label>
 										<div class="flex h-full w-full justify-center bg-black">
-											<img src={ ext.ImageUrls[idx] } class="object-cover" alt="fullscreen media"/>
+											<img src={ ext.ImageAttachments[idx].URL.String } class="object-cover" alt="fullscreen media"/>
 										</div>
 									</div>
 								</label>

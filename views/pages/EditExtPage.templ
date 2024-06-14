@@ -1,0 +1,225 @@
+package pages
+
+import "binder/views/components/navbar"
+import "binder/views/components/input"
+import "binder/entities"
+import "fmt"
+
+templ EditExtPage(ext *entities.Extension) {
+	<!DOCTYPE html>
+	<html lang="en">
+		@IndexHead(fmt.Sprintf("Edit \"%s\" | Binder", ext.Title))
+		<head>
+			<link href="/static/ace/theme/terminal.min.css" rel="stylesheet"/>
+		</head>
+		<body class="p-2 font-bold" onload={ injectEditScript(ext) }>
+			<header>
+				@navbar.CreateNavbar()
+			</header>
+			<main class="flex flex-col items-center">
+				@EditExtBody(ext)
+			</main>
+			<script src="/static/dropzone.min.js"></script>
+			<script src="/static/ace/ace.js"></script>
+			<script src="/static/editor.min.js"></script>
+		</body>
+	</html>
+}
+
+templ EditExtBody(ext *entities.Extension) {
+	<form
+		hx-post="/api/ext/edit"
+		hx-target="#info-wrapper"
+		hx-indicator="#loading"
+		hx-disabled-elt="button[type='submit']"
+		enctype="multipart/form-data"
+		class="my-12 flex w-full flex-col items-center py-4 px-4 lg:px-12"
+	>
+		<h1 class="text-2xl font-bold">Edit Extension</h1>
+		<div class="mt-12 mb-4">
+			if len(ext.ImageAttachments) > 0 {
+				<div class="relative carousel w-full">
+					for idx, value := range ext.ImageAttachments {
+						<div id={ fmt.Sprintf("item-%d", idx+1) } class="carousel-item w-full">
+							<div class="relative w-full">
+								<img
+									src={ value.URL.String }
+									alt={ ext.Title }
+									class="h-[400px] w-full object-cover md:rounded-t-xl"
+								/>
+								<label
+									for={ fmt.Sprintf("#modal-item-%d", idx+1) }
+									class="modal-button absolute top-0 left-0 right-0 bottom-0 z-10 cursor-pointer"
+								></label>
+								<div class="absolute top-5 right-5 z-40">
+									<div class="tooltip tooltip-left z-40" data-tip="Remove Image">
+										<button
+											type="button"
+											class="btn btn-circle btn-error"
+											onclick={ templ.ComponentScript{
+													Call: fmt.Sprintf("delete_confirmation_modal_%s.showModal()", value.ID.String),
+												} }
+										>
+											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+												<path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"></path>
+											</svg>
+										</button>
+									</div>
+								</div>
+								<!-- Delete Confirmation Modal -->
+								<dialog id={ fmt.Sprintf("delete_confirmation_modal_%s", value.ID.String) } class="modal">
+									<div class="modal-box">
+										<h3 class="font-bold text-lg">Are you sure you want to delete this image?</h3>
+										<p class="py-4 font-normal">Please double-check the action. Deleting the image will remove it from the record, and this action cannot be reversed whatsoever.</p>
+										<div id="modal-error"></div>
+										<div class="modal-action">
+											<form method="dialog" class="flex gap-2">
+												<button
+													class="btn btn-primary"
+													hx-trigger="none"
+													onclick={ templ.ComponentScript{
+													Call: fmt.Sprintf("delete_confirmation_modal_%s.close()", value.ID.String),
+												} }
+												>No, Cancel</button>
+												<button
+													class="btn btn-ghost flex items-center gap-2"
+													hx-delete={ fmt.Sprintf("/api/ext/image/%s/%s", ext.Slug, value.ID.String) }
+													hx-target="#modal-error"
+													hx-indicator="#search-spinner"
+												>
+													Yes, Delete
+													<span class="loading loading-dots loading-xs search-indicator-none" id="search-spinner"></span>
+												</button>
+											</form>
+										</div>
+									</div>
+								</dialog>
+							</div>
+						</div>
+					}
+				</div>
+				<div class="flex justify-center w-full py-2 gap-2">
+					for idx := range ext.ImageAttachments {
+						<a href={ templ.SafeURL(fmt.Sprintf("#item-%d", idx+1)) } class="btn btn-xs">{ fmt.Sprint(idx+1) }</a>
+						<!-- ZOOM IMAGE MODAL -->
+						<input type="checkbox" id={ fmt.Sprintf("#modal-item-%d", idx+1) } class="modal-toggle"/>
+						<label
+							for={ fmt.Sprintf("#modal-item-%d", idx+1) }
+							class="modal h-full w-full backdrop-blur-md"
+						>
+							<div class="modal-box relative max-h-full max-w-full p-0 shadow-2xl lg:h-[90%] lg:w-[95%]">
+								<label
+									for={ fmt.Sprintf("#modal-item-%d", idx+1) }
+									class="btn-sm btn-circle btn absolute right-2 top-2 shadow-2xl"
+								>✕</label>
+								<div class="flex h-full w-full justify-center bg-black">
+									<img src={ ext.ImageAttachments[idx].URL.String } class="object-cover" alt="fullscreen media"/>
+								</div>
+							</div>
+						</label>
+					}
+				</div>
+			}
+		</div>
+		<div class="flex w-full flex-col gap-4 py-8 pb-20 lg:w-8/12">
+			<!-- Title -->
+			<div class="form-control">
+				<label class="label" for="title-input">
+					<span class="label-text">Title of Extension*</span>
+				</label>
+				<label class="input input-bordered flex items-center gap-2">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="h-5 w-5"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+						stroke-width="2"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h8m-8 6h16"></path>
+					</svg>
+					<input type="text" name="ext-title" class="grow" placeholder="Title" required value={ ext.Title }/>
+				</label>
+				<label class="label px-2" for="title-input">
+					<span class="label-text-alt">Title must be at least 3 characters</span>
+				</label>
+			</div>
+			<!-- Description Textarea -->
+			<div class="form-control">
+				<label class="label" for="desc-input">
+					<span class="label-text">Description</span>
+				</label>
+				<textarea
+					id="desc-input"
+					name="ext-desc"
+					class="textarea textarea-bordered w-full"
+					rows="10"
+					placeholder="Description"
+					value={ ext.Description.String }
+				></textarea>
+			</div>
+			<!-- Drag Drop Image -->
+			<div class="form-control">
+				<label class="label" for="dropzone">
+					<span class="label-text">Upload Image</span>
+				</label>
+				@input.ImageDropzone()
+			</div>
+			<!-- Youtube URL -->
+			<div class="form-control">
+				<label class="label" for="yt-input">
+					<span class="label-text">Youtube Video</span>
+				</label>
+				<label class="input input-bordered flex items-center gap-2">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="currentColor"
+						class="h-5 w-5"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
+						></path>
+					</svg>
+					<input
+						type="text"
+						id="yt-input"
+						name="ext-yt"
+						placeholder="Youtube video URL"
+						class="grow"
+						value={ ext.YoutubeURL.String }
+					/>
+				</label>
+			</div>
+			<!-- CODE INPUT SECTION -->
+			<section>
+				<label class="label" for="editor">
+					<span class="label-text">Code</span>
+				</label>
+				<input aria-hidden="true" type="hidden" name="ext-code" id="hidden-editor"/>
+				<div id="editor" class="min-h-[500px] !text-lg"></div>
+				<label class="label" for="editor">
+					<span class="label-text-alt"><span id="editor-len">0</span>/10000</span>
+				</label>
+			</section>
+			<div id="info-wrapper"></div>
+			<div class="my-12 w-full flex justify-end">
+				<button type="submit" class="w-full btn btn-primary">
+					Save
+					<span id="loading" class="loading loading-dots loading-md loading-indicator"></span>
+				</button>
+			</div>
+		</div>
+	</form>
+}
+
+script injectEditScript(ext *entities.Extension) {
+	const editor = ace.edit("editor");
+	editor.setTheme("ace/theme/terminal");
+	editor.session.setMode("ace/mode/typescript");
+	editor.session.setValue(ext.Code.String);
+}

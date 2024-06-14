@@ -3405,6 +3405,14 @@ input.tab:checked + .tab-content,
   bottom: var(--tooltip-offset);
 }
 
+.tooltip-left:before {
+  transform: translateY(-50%);
+  top: 50%;
+  left: auto;
+  right: var(--tooltip-offset);
+  bottom: auto;
+}
+
 .card-compact .card-body {
   padding: 1rem;
   font-size: 0.875rem;
@@ -3563,6 +3571,15 @@ input.tab:checked + .tab-content,
   bottom: var(--tooltip-tail-offset);
 }
 
+.tooltip-left:after {
+  transform: translateY(-50%);
+  border-color: transparent transparent transparent var(--tooltip-color);
+  top: 50%;
+  left: auto;
+  right: calc(var(--tooltip-tail-offset) + 0.0625rem);
+  bottom: auto;
+}
+
 .visible {
   visibility: visible;
 }
@@ -3599,6 +3616,10 @@ input.tab:checked + .tab-content,
   right: 0.5rem;
 }
 
+.right-5 {
+  right: 1.25rem;
+}
+
 .top-0 {
   top: 0px;
 }
@@ -3607,8 +3628,16 @@ input.tab:checked + .tab-content,
   top: 0.5rem;
 }
 
+.top-5 {
+  top: 1.25rem;
+}
+
 .z-10 {
   z-index: 10;
+}
+
+.z-40 {
+  z-index: 40;
 }
 
 .my-12 {
@@ -3636,6 +3665,10 @@ input.tab:checked + .tab-content,
 
 .mb-5 {
   margin-bottom: 1.25rem;
+}
+
+.mt-12 {
+  margin-top: 3rem;
 }
 
 .mt-16 {
@@ -3706,6 +3739,10 @@ input.tab:checked + .tab-content,
   height: 2rem;
 }
 
+.h-\[400px\] {
+  height: 400px;
+}
+
 .h-full {
   height: 100%;
 }
@@ -3713,14 +3750,6 @@ input.tab:checked + .tab-content,
 .h-min {
   height: -moz-min-content;
   height: min-content;
-}
-
-.h-\[400px\] {
-  height: 400px;
-}
-
-.max-h-\[400px\] {
-  max-height: 400px;
 }
 
 .max-h-full {
@@ -3901,11 +3930,6 @@ input.tab:checked + .tab-content,
      object-fit: cover;
 }
 
-.object-fill {
-  -o-object-fit: fill;
-     object-fit: fill;
-}
-
 .p-0 {
   padding: 0px;
 }
@@ -3916,10 +3940,6 @@ input.tab:checked + .tab-content,
 
 .p-2 {
   padding: 0.5rem;
-}
-
-.p-4 {
-  padding: 1rem;
 }
 
 .px-2 {

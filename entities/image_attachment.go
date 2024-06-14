@@ -1,7 +1,9 @@
 package entities
 
+import "database/sql"
+
 type ImageAttachment struct {
-	ID          string
-	URL         string
-	ExtensionID string
+	ID          sql.NullString
+	URL         sql.NullString
+	ExtensionID sql.NullString
 }

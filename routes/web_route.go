@@ -41,4 +41,16 @@ func InitWebRoutes(e *echo.Echo) {
 
 		return utils.Render(c, http.StatusOK, pages.DetailExtPage(ext))
 	}, middlewares.ProtectedMiddleware)
+
+	e.GET("/edit/:slug", func(c echo.Context) error {
+		slug := c.Param("slug")
+		userID := utils.GetUserIDFromContext(c.Request().Context())
+
+		ext, err := repos.GetExt(userID, slug)
+		if err != nil {
+			return utils.Render(c, http.StatusOK, pages.NotFoundPage())
+		}
+
+		return utils.Render(c, http.StatusOK, pages.EditExtPage(ext))
+	}, middlewares.ProtectedMiddleware)
 }
