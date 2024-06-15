@@ -73,7 +73,7 @@ templ EditExtBody(ext *entities.Extension) {
 										<p class="py-4 font-normal">Please double-check the action. Deleting the image will remove it from the record, and this action cannot be reversed whatsoever.</p>
 										<div id="modal-error"></div>
 										<div class="modal-action">
-											<form method="dialog" class="flex gap-2">
+											<div class="flex gap-2">
 												<button
 													class="btn btn-primary"
 													hx-trigger="none"
@@ -90,7 +90,7 @@ templ EditExtBody(ext *entities.Extension) {
 													Yes, Delete
 													<span class="loading loading-dots loading-xs search-indicator-none" id="search-spinner"></span>
 												</button>
-											</form>
+											</div>
 										</div>
 									</div>
 								</dialog>
@@ -139,6 +139,7 @@ templ EditExtBody(ext *entities.Extension) {
 						<path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h8m-8 6h16"></path>
 					</svg>
 					<input type="text" name="ext-title" class="grow" placeholder="Title" required value={ ext.Title }/>
+					<input class="none" type="hidden" name="ext-slug" value={ ext.Slug }/>
 				</label>
 				<label class="label px-2" for="title-input">
 					<span class="label-text-alt">Title must be at least 3 characters</span>
@@ -155,13 +156,12 @@ templ EditExtBody(ext *entities.Extension) {
 					class="textarea textarea-bordered w-full"
 					rows="10"
 					placeholder="Description"
-					value={ ext.Description.String }
-				></textarea>
+				>{ ext.Description.String }</textarea>
 			</div>
 			<!-- Drag Drop Image -->
 			<div class="form-control">
 				<label class="label" for="dropzone">
-					<span class="label-text">Upload Image</span>
+					<span class="label-text">Upload New Images</span>
 				</label>
 				@input.ImageDropzone()
 			</div>

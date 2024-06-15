@@ -189,7 +189,7 @@ func EditExtBody(ext *entities.Extension) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"modal\"><div class=\"modal-box\"><h3 class=\"font-bold text-lg\">Are you sure you want to delete this image?</h3><p class=\"py-4 font-normal\">Please double-check the action. Deleting the image will remove it from the record, and this action cannot be reversed whatsoever.</p><div id=\"modal-error\"></div><div class=\"modal-action\"><form method=\"dialog\" class=\"flex gap-2\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"modal\"><div class=\"modal-box\"><h3 class=\"font-bold text-lg\">Are you sure you want to delete this image?</h3><p class=\"py-4 font-normal\">Please double-check the action. Deleting the image will remove it from the record, and this action cannot be reversed whatsoever.</p><div id=\"modal-error\"></div><div class=\"modal-action\"><div class=\"flex gap-2\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -223,7 +223,7 @@ func EditExtBody(ext *entities.Extension) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#modal-error\" hx-indicator=\"#search-spinner\">Yes, Delete <span class=\"loading loading-dots loading-xs search-indicator-none\" id=\"search-spinner\"></span></button></form></div></div></dialog></div></div>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#modal-error\" hx-indicator=\"#search-spinner\">Yes, Delete <span class=\"loading loading-dots loading-xs search-indicator-none\" id=\"search-spinner\"></span></button></div></div></div></dialog></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -330,20 +330,33 @@ func EditExtBody(ext *entities.Extension) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></label> <label class=\"label px-2\" for=\"title-input\"><span class=\"label-text-alt\">Title must be at least 3 characters</span></label></div><!-- Description Textarea --><div class=\"form-control\"><label class=\"label\" for=\"desc-input\"><span class=\"label-text\">Description</span></label> <textarea id=\"desc-input\" name=\"ext-desc\" class=\"textarea textarea-bordered w-full\" rows=\"10\" placeholder=\"Description\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> <input class=\"none\" type=\"hidden\" name=\"ext-slug\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var19 string
-		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(ext.Description.String)
+		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(ext.Slug)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/pages/EditExtPage.templ`, Line: 158, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/pages/EditExtPage.templ`, Line: 142, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></textarea></div><!-- Drag Drop Image --><div class=\"form-control\"><label class=\"label\" for=\"dropzone\"><span class=\"label-text\">Upload Image</span></label>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></label> <label class=\"label px-2\" for=\"title-input\"><span class=\"label-text-alt\">Title must be at least 3 characters</span></label></div><!-- Description Textarea --><div class=\"form-control\"><label class=\"label\" for=\"desc-input\"><span class=\"label-text\">Description</span></label> <textarea id=\"desc-input\" name=\"ext-desc\" class=\"textarea textarea-bordered w-full\" rows=\"10\" placeholder=\"Description\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var20 string
+		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(ext.Description.String)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/pages/EditExtPage.templ`, Line: 159, Col: 29}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</textarea></div><!-- Drag Drop Image --><div class=\"form-control\"><label class=\"label\" for=\"dropzone\"><span class=\"label-text\">Upload New Images</span></label>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -355,12 +368,12 @@ func EditExtBody(ext *entities.Extension) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var20 string
-		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(ext.YoutubeURL.String)
+		var templ_7745c5c3_Var21 string
+		templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(ext.YoutubeURL.String)
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/pages/EditExtPage.templ`, Line: 194, Col: 35}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

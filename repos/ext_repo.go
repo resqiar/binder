@@ -54,6 +54,45 @@ func CreateExt(extInput *dtos.CreateExtInput, imgInput []dtos.CreateImagesInput)
 	return &slug, nil
 }
 
+func EditExt(extInput *dtos.CreateExtInput, imgInput []dtos.CreateImagesInput) error {
+	var extID string
+
+	SQL := "UPDATE extensions SET title = $1, description = $2, code = $3, youtube_url = $4 WHERE slug = $5 AND author_id = $6 RETURNING id"
+
+	tx, err := configs.DB_POOL.Begin(context.Background())
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(context.Background())
+
+	// Step 1: update extension
+	if err := tx.QueryRow(
+		context.Background(),
+		SQL,
+		extInput.Title,
+		extInput.Description,
+		extInput.Code,
+		extInput.Youtube_url,
+		extInput.Slug,
+		extInput.Author_id,
+	).Scan(&extID); err != nil {
+		log.Println(err)
+		return err
+	}
+
+	// Step 2: create attachments and use ext id as FK
+	if err := createAttachments(tx, extID, imgInput); err != nil {
+		return err
+	}
+
+	// Step 3: commit tx
+	if err := tx.Commit(context.Background()); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func createAttachments(tx pgx.Tx, extID string, urls []dtos.CreateImagesInput) error {
 	var ids []string
 
