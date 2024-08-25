@@ -54,6 +54,45 @@ func CreateExt(extInput *dtos.CreateExtInput, imgInput []dtos.CreateImagesInput)
 	return &slug, nil
 }
 
+func EditExt(extInput *dtos.CreateExtInput, imgInput []dtos.CreateImagesInput) error {
+	var extID string
+
+	SQL := "UPDATE extensions SET title = $1, description = $2, code = $3, youtube_url = $4 WHERE slug = $5 AND author_id = $6 RETURNING id"
+
+	tx, err := configs.DB_POOL.Begin(context.Background())
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(context.Background())
+
+	// Step 1: update extension
+	if err := tx.QueryRow(
+		context.Background(),
+		SQL,
+		extInput.Title,
+		extInput.Description,
+		extInput.Code,
+		extInput.Youtube_url,
+		extInput.Slug,
+		extInput.Author_id,
+	).Scan(&extID); err != nil {
+		log.Println(err)
+		return err
+	}
+
+	// Step 2: create attachments and use ext id as FK
+	if err := createAttachments(tx, extID, imgInput); err != nil {
+		return err
+	}
+
+	// Step 3: commit tx
+	if err := tx.Commit(context.Background()); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func createAttachments(tx pgx.Tx, extID string, urls []dtos.CreateImagesInput) error {
 	var ids []string
 
@@ -115,38 +154,48 @@ func GetAllExts(userID string) ([]entities.Extension, error) {
 
 func GetExt(userID string, slug string) (*entities.Extension, error) {
 	var ext entities.Extension
-	var images sql.NullString
+	var attachments []entities.ImageAttachment
 
 	SQL := `
-		SELECT e.id, e.slug, e.title, e.description, e.code, e.youtube_url, e.created_at, e.updated_at, STRING_AGG(a.url, ',')
+		SELECT e.id, e.slug, e.title, e.description, e.code, e.youtube_url, e.created_at, e.updated_at, a.id, a.url
 		FROM extensions e
 		LEFT JOIN image_attachments a
 		ON a.extension_id = e.id
 		WHERE e.author_id = $1 AND e.slug = $2
-		GROUP BY e.id, e.slug, e.title, e.description, e.code, e.youtube_url, e.created_at, e.updated_at
 	`
 
-	row := configs.DB_POOL.QueryRow(context.Background(), SQL, userID, slug)
-	if err := row.Scan(
-		&ext.ID,
-		&ext.Slug,
-		&ext.Title,
-		&ext.Description,
-		&ext.Code,
-		&ext.YoutubeURL,
-		&ext.CreatedAt,
-		&ext.UpdatedAt,
-		&images,
-	); err != nil {
+	rows, err := configs.DB_POOL.Query(context.Background(), SQL, userID, slug)
+	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
+	defer rows.Close()
 
-	// update picture urls from aggregated string
-	if images.String != "" {
-		splitted_images := strings.Split(images.String, ",")
-		ext.ImageUrls = splitted_images
+	for rows.Next() {
+		var attachment entities.ImageAttachment
+
+		if err := rows.Scan(
+			&ext.ID,
+			&ext.Slug,
+			&ext.Title,
+			&ext.Description,
+			&ext.Code,
+			&ext.YoutubeURL,
+			&ext.CreatedAt,
+			&ext.UpdatedAt,
+			&attachment.ID,
+			&attachment.URL,
+		); err != nil {
+			log.Println(err)
+			return nil, err
+		}
+
+		if attachment.ID.String != "" && attachment.URL.String != "" {
+			attachments = append(attachments, attachment)
+		}
 	}
+
+	ext.ImageAttachments = attachments
 
 	return &ext, nil
 }
@@ -189,4 +238,154 @@ func SearchExt(userID string, keyword string) ([]entities.Extension, error) {
 	}
 
 	return exts, nil
+}
+
+func DeleteExt(userID string, extSlug string) error {
+	GET_EXT_SQL := `
+		SELECT e.id, STRING_AGG(a.id, ',') AS ImageIds
+		FROM extensions e
+		LEFT JOIN image_attachments a
+		ON a.extension_id = e.id
+		WHERE e.author_id = $1 AND e.slug = $2
+		GROUP BY e.id
+	`
+	DELETE_ATTACHMENT_SQL := "DELETE FROM image_attachments WHERE id = $1 AND extension_id = $2"
+	DELETE_EXT_SQL := "DELETE FROM extensions WHERE slug = $1 AND author_id = $2"
+
+	tx, err := configs.DB_POOL.Begin(context.Background())
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(context.Background())
+
+	type TemporaryExt struct {
+		ID       string
+		ImageIds []string
+	}
+
+	var temp TemporaryExt
+	var imageIds sql.NullString
+
+	// Step 1: get extension detail
+	row := tx.QueryRow(
+		context.Background(),
+		GET_EXT_SQL,
+		userID,
+		extSlug,
+	)
+	if err := row.Scan(
+		&temp.ID,
+		&imageIds,
+	); err != nil {
+		log.Println("Failed to get extension detail:", err)
+		return err
+	}
+
+	// bind picture ids from aggregated string
+	if imageIds.String != "" {
+		splitted_images := strings.Split(imageIds.String, ",")
+		temp.ImageIds = splitted_images
+	}
+
+	for _, imageId := range temp.ImageIds {
+		// Step 2: delete image from imagekit
+		err = utils.DeleteImage(imageId)
+		if err != nil {
+			log.Println("[Skipping...] Failed deleting imagekit file:", err)
+		}
+
+		// Step 3: delete attachments using the ids
+		_, err = tx.Exec(
+			context.Background(),
+			DELETE_ATTACHMENT_SQL,
+			imageId,
+			temp.ID,
+		)
+		if err != nil {
+			log.Println("Failed deleting attachments:", err)
+			return err
+		}
+	}
+
+	// Step 4: delete extension
+	_, err = tx.Exec(
+		context.Background(),
+		DELETE_EXT_SQL,
+		extSlug,
+		userID,
+	)
+	if err != nil {
+		log.Println("Failed deleting extension:", err)
+		return err
+	}
+
+	// Step 5: commit tx
+	if err := tx.Commit(context.Background()); err != nil {
+		log.Println("Failed to commit delete ext transaction:", err)
+		return err
+	}
+
+	return nil
+}
+
+func DeleteExtImage(userID string, extSlug string, imageId string) error {
+	var ext entities.Extension
+	var image entities.ImageAttachment
+
+	EXT_SQL := `
+		SELECT id, slug
+		FROM extensions
+		WHERE author_id = $1 AND slug = $2
+	`
+	IMG_SQL := `
+		SELECT id FROM image_attachments WHERE extension_id = $1 AND id = $2
+	`
+	DELETE_IMG_SQL := `
+		DELETE FROM image_attachments WHERE extension_id = $1 AND id = $2
+	`
+
+	tx, err := configs.DB_POOL.Begin(context.Background())
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(context.Background())
+
+	// step 1: get ext
+	row := tx.QueryRow(context.Background(), EXT_SQL, userID, extSlug)
+	if err := row.Scan(
+		&ext.ID,
+		&ext.Slug,
+	); err != nil {
+		log.Println("Failed to get extension:", err)
+		return err
+	}
+
+	// step 2: get image detail
+	row = tx.QueryRow(context.Background(), IMG_SQL, ext.ID, imageId)
+	if err := row.Scan(
+		&image.ID,
+	); err != nil {
+		log.Println("Failed to get image detail:", err)
+		return err
+	}
+
+	// step 3: delete image extension
+	_, err = tx.Exec(context.Background(), DELETE_IMG_SQL, ext.ID, imageId)
+	if err != nil {
+		log.Println("Failed to delete image attachment:", err)
+		return err
+	}
+
+	// step 4: delete image from imagekit
+	if err := utils.DeleteImage(imageId); err != nil {
+		log.Println("[Skipping...] Failed deleting imagekit file:", err)
+	}
+
+	// step 5: commit tx
+	if err := tx.Commit(context.Background()); err != nil {
+		log.Println("Failed to commit delete ext transaction:", err)
+		return err
+	}
+
+	return nil
 }

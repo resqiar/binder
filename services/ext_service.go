@@ -56,6 +56,64 @@ func CreateExtensionService(c echo.Context) error {
 	return c.String(http.StatusOK, views.SendCreateExtSuccessAlert(fmt.Sprintf("/ext/%s", *extSlug)))
 }
 
+func EditExtensionService(c echo.Context) error {
+	multipart, _ := c.MultipartForm()
+	userID := c.Get("userID").(string)
+	images := multipart.File["ext-images"]
+	extSlug := c.FormValue("ext-slug")
+	title := c.FormValue("ext-title")
+	desc := c.FormValue("ext-desc")
+	code := c.FormValue("ext-code")
+	yt := c.FormValue("ext-yt")
+
+	if extSlug == "" {
+		return c.String(http.StatusOK, views.SendErrorAlert("Extension Slug is Missing"))
+	}
+
+	if title == "" {
+		return c.String(http.StatusOK, views.SendErrorAlert("Title is required"))
+	}
+
+	if len(code) > 10000 {
+		return c.String(http.StatusOK, views.SendErrorAlert("The length of code is exceeding 10K characters"))
+	}
+
+	if len(images) > 5 {
+		return c.String(http.StatusOK, views.SendErrorAlert("Max images are only 5"))
+	}
+
+	ext, err := repos.GetExt(userID, extSlug)
+	if err != nil {
+		return c.String(http.StatusOK, views.SendErrorAlert("Failed to create new extension, please try again later"))
+	}
+
+	if len(images)+len(ext.ImageAttachments) > 5 {
+		return c.String(http.StatusOK, views.SendErrorAlert("Max images are only 5, delete the other first, then try again."))
+	}
+
+	// Upload images to ImageKit
+	uploadedImages, err := utils.UploadImages(images)
+	if err != nil {
+		return c.String(http.StatusOK, views.SendErrorAlert(err.Error()))
+	}
+
+	extInput := dtos.CreateExtInput{
+		Slug:        extSlug,
+		Title:       title,
+		Description: desc,
+		Code:        code,
+		Youtube_url: yt,
+		Author_id:   userID,
+	}
+
+	// Edit extension with its attachments
+	if err := repos.EditExt(&extInput, uploadedImages); err != nil {
+		return c.String(http.StatusOK, views.SendErrorAlert("Failed to create new extension, please try again later"))
+	}
+
+	return c.String(http.StatusOK, views.SendEditExtSuccessAlert(fmt.Sprintf("/ext/%s", extSlug)))
+}
+
 func GetAllExtensionService(c echo.Context) error {
 	userID := c.Get("userID").(string)
 
@@ -100,4 +158,43 @@ func SearchExtensionService(c echo.Context) error {
 	}
 
 	return c.String(http.StatusOK, views.SendSearchCard(exts))
+}
+
+func DeleteExtensionService(c echo.Context) error {
+	userID := c.Get("userID").(string)
+	extSlug := c.Param("slug")
+
+	if extSlug == "" {
+		return c.String(http.StatusNotFound, views.SendErrorAlert("You are requesting to unrecognized URL"))
+	}
+
+	// Delete extension with its attachments
+	err := repos.DeleteExt(userID, extSlug)
+	if err != nil {
+		return c.String(http.StatusOK, views.SendErrorAlert("Failed to delete extension, please try again later"))
+	}
+
+	// Redirect back to dashboard while in success
+	c.Response().Header().Add("HX-Redirect", "/dashboard")
+	return c.String(http.StatusOK, "OK")
+}
+
+func DeleteExtensionImageService(c echo.Context) error {
+	userID := c.Get("userID").(string)
+	extSlug := c.Param("slug")
+	imageId := c.Param("imageId")
+
+	if extSlug == "" || imageId == "" {
+		return c.String(http.StatusNotFound, views.SendErrorAlert("You are requesting to unrecognized URL"))
+	}
+
+	// Delete image from an extension
+	err := repos.DeleteExtImage(userID, extSlug, imageId)
+	if err != nil {
+		return c.String(http.StatusOK, views.SendErrorAlert("Failed to delete image, please try again later"))
+	}
+
+	// Redirect back (refresh) while in success attempt
+	c.Response().Header().Add("HX-Redirect", fmt.Sprintf("/edit/%s", extSlug))
+	return c.String(http.StatusOK, "OK")
 }
