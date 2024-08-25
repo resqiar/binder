@@ -32,21 +32,6 @@ func SendCreateExtSuccessAlert(url string) string {
 	)
 }
 
-func SendEditExtSuccessAlert(url string) string {
-	return fmt.Sprintf(`
-		<div role="alert" class="alert shadow-lg">
-			<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-			<div>
-				<h3 class="font-bold">Extension successfully edited!</h3>
-				<div class="text-xs">You can continue editing or view details of the one you just edited.</div>
-			</div>
-			<a href="%s" class="btn btn-neutral btn-sm">See Details</a>
-		</div>
-		`,
-		url,
-	)
-}
-
 func SendSearchNotFound(message string) string {
 	return fmt.Sprintf(`
 		<div class="flex-cols mb-12 flex justify-center w-full flex-wrap gap-2 px-4 pb-20 md:flex-row lg:mt-4">

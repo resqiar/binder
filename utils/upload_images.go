@@ -38,7 +38,6 @@ func UploadImages(images []*multipart.FileHeader) ([]dtos.CreateImagesInput, err
 		// upload image binary to ImageKit
 		resp, err := ik.Uploader.Upload(context.Background(), file, uploader.UploadParam{
 			FileName: v.Filename,
-			Folder:   "binder",
 		})
 		if err != nil {
 			log.Println(err)
@@ -54,15 +53,6 @@ func UploadImages(images []*multipart.FileHeader) ([]dtos.CreateImagesInput, err
 	}
 
 	return imgs, nil
-}
-
-func DeleteImage(fileId string) error {
-	ik, err := imagekit.New()
-	_, err = ik.Media.DeleteFile(context.Background(), fileId)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func validateImage(fileHeader *multipart.FileHeader) error {
