@@ -1,10 +1,12 @@
 module binder
 
-go 1.22.0
+go 1.23
+
+toolchain go1.23.0
 
 require (
 	github.com/a-h/templ v0.2.771
-	github.com/gorilla/sessions v1.2.2
+	github.com/gorilla/sessions v1.4.0
 	github.com/imagekit-developer/imagekit-go v0.0.0-20231221064253-557eb49f9c53
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/jaevor/go-nanoid v1.3.0
