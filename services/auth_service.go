@@ -2,11 +2,15 @@ package services
 
 import (
 	"binder/configs"
+	"binder/dtos"
 	"binder/repos"
 	"binder/utils"
 	"log"
 	"net/http"
+	"os"
+	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
@@ -129,4 +133,73 @@ func LogoutService(c echo.Context) error {
 	}
 
 	return c.Redirect(http.StatusTemporaryRedirect, "/login")
+}
+
+func MobileRegisterService(c echo.Context) error {
+	var payload dtos.MobileToken
+
+	if err := c.Bind(&payload); err != nil {
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"error": err,
+		})
+	}
+
+	// validate the payload using class-validator
+	if err := ValidateInput(payload); err != "" {
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"error": err,
+		})
+	}
+
+	// convert token to user profile data
+	profile, err := utils.ConvertGoogleToken(payload.Token)
+	if err != nil {
+		return c.NoContent(http.StatusUnauthorized)
+	}
+
+	// check if there is a user recorded with the same creds
+	existingUser, _ := repos.FindUserByEmail(profile.Email)
+	if existingUser == nil {
+		newUser, err := CreateUser(profile)
+		if err != nil {
+			log.Printf("Failed to register user: %v", err)
+			return c.String(http.StatusInternalServerError, "Failed to register user")
+		}
+
+		signedToken, err := GenerateToken(newUser.ID)
+		if err != nil {
+			log.Println(err)
+			return c.NoContent(http.StatusInternalServerError)
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"token": signedToken,
+		})
+	}
+
+	signedToken, err := GenerateToken(existingUser.ID)
+	if err != nil {
+		log.Println(err)
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"token": signedToken,
+	})
+}
+
+func GenerateToken(id string) (string, error) {
+	key := []byte(os.Getenv("JWT_TOKEN"))
+
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":  id,
+		"exp": time.Now().Add(time.Hour * 24 * 30).Unix(), // 1 month
+	})
+
+	token, err := claims.SignedString(key)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }

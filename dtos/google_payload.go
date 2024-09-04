@@ -10,3 +10,7 @@ type GooglePayload struct {
 	EmailVerified bool   `json:"email_verified"`
 	Locale        string `json:"locale"`
 }
+
+type MobileToken struct {
+	Token string `json:"token" validate:"required"`
+}

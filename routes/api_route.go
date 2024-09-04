@@ -20,4 +20,7 @@ func InitAPIRoutes(e *echo.Echo) {
 	ext.DELETE("/delete/:slug", services.DeleteExtensionService)
 	ext.DELETE("/image/:slug/:imageId", services.DeleteExtensionImageService)
 	ext.GET("/search", services.SearchExtensionService)
+
+	mobile := e.Group("mobile")
+	mobile.POST("/register", services.MobileRegisterService)
 }
