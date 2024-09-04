@@ -146,7 +146,7 @@ func MobileRegisterService(c echo.Context) error {
 
 	// validate the payload using class-validator
 	if err := ValidateInput(payload); err != "" {
-		return c.JSON(http.StatusOK, map[string]interface{}{
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"error": err,
 		})
 	}
@@ -163,7 +163,7 @@ func MobileRegisterService(c echo.Context) error {
 		newUser, err := CreateUser(profile)
 		if err != nil {
 			log.Printf("Failed to register user: %v", err)
-			return c.String(http.StatusInternalServerError, "Failed to register user")
+			return c.NoContent(http.StatusInternalServerError)
 		}
 
 		signedToken, err := GenerateToken(newUser.ID)
