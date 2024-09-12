@@ -40,6 +40,8 @@ github.com/gorilla/sessions v1.2.2 h1:lqzMYz6bOfvn2WriPUjNByzeXIlVzURcPmgMczkmTj
 github.com/gorilla/sessions v1.2.2/go.mod h1:ePLdVu+jbEgHH+KWw8I1z2wqd0BAdAQh/8LRvBeoNcQ=
 github.com/imagekit-developer/imagekit-go v0.0.0-20231221064253-557eb49f9c53 h1:6eLO+dlarOufjMt4IOFQqEhN9NlA0pdfY13/w44mw6A=
 github.com/imagekit-developer/imagekit-go v0.0.0-20231221064253-557eb49f9c53/go.mod h1:ELYbj+Ny8Qo0XIEilOY7WNedv3h/NGG1Cgdm41AF6nw=
+github.com/imagekit-developer/imagekit-go v0.0.0-20240521071536-1d7e6e67fcd7 h1:zwDKac/9rizv5klMe1juWe/W0P5M1LoatWRKmHll574=
+github.com/imagekit-developer/imagekit-go v0.0.0-20240521071536-1d7e6e67fcd7/go.mod h1:ELYbj+Ny8Qo0XIEilOY7WNedv3h/NGG1Cgdm41AF6nw=
 github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=
 github.com/jackc/pgpassfile v1.0.0/go.mod h1:CEx0iS5ambNFdcRtxPj5JhEz+xB6uRky5eyVu/W2HEg=
 github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a h1:bbPeKD0xmW/Y25WS6cokEszi5g+S0QxI/d45PkRi7Nk=
