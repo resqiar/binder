@@ -1,11 +1,14 @@
 module binder
 
-go 1.22.0
+go 1.23
+
+toolchain go1.23.1
 
 require (
 	github.com/a-h/templ v0.2.771
 	github.com/go-playground/validator/v10 v10.22.0
-	github.com/gorilla/sessions v1.2.2
+	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/gorilla/sessions v1.4.0
 	github.com/imagekit-developer/imagekit-go v0.0.0-20231221064253-557eb49f9c53
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/jaevor/go-nanoid v1.3.0
@@ -23,7 +26,6 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/context v1.1.2 // indirect
