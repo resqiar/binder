@@ -12,7 +12,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo-contrib v0.16.0
 	github.com/labstack/echo/v4 v4.11.4
-	golang.org/x/oauth2 v0.18.0
+	golang.org/x/oauth2 v0.30.0
 )
 
 require (
